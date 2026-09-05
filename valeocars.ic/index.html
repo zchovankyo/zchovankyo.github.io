@@ -1,0 +1,1333 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VALEO CARS</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg-body: #0b0f19;
+      --bg-header: linear-gradient(135deg, #0f172a, #1e293b);
+      --bg-card: #111827;
+      --border-color: #1f2937;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --control-bg: #0b0f19;
+      --control-border: #374151;
+      --accent: #2563eb;
+      --accent-hover: #1d4ed8;
+      --card-shadow: rgba(0,0,0,0.2);
+    }
+
+    [data-theme="light"] {
+      --bg-body: #f1f5f9;
+      --bg-header: linear-gradient(135deg, #1e40af, #3b82f6);
+      --bg-card: #ffffff;
+      --border-color: #e2e8f0;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --control-bg: #f8fafc;
+      --control-border: #cbd5e1;
+      --accent: #2563eb;
+      --accent-hover: #1d4ed8;
+      --card-shadow: rgba(0,0,0,0.05);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Montserrat', sans-serif;
+      transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+    }
+
+    body {
+      background-color: var(--bg-body);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      background: var(--bg-header);
+      height: 75px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 50px;
+      box-shadow: 0 4px 20px var(--card-shadow);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+    }
+
+    .brand-logo {
+      width: 36px;
+      height: 36px;
+      fill: #ffffff;
+    }
+
+    .brand-title {
+      font-size: 24px;
+      font-weight: 900;
+      color: #ffffff;
+      letter-spacing: 0.5px;
+      line-height: 0.9;
+    }
+
+    .brand-title span {
+      display: block;
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      color: #93c5fd;
+    }
+
+    nav {
+      display: flex;
+      align-items: center;
+      height: 100%;
+      gap: 10px;
+    }
+
+    .nav-item a {
+      color: #ffffff;
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.8px;
+      padding: 8px 16px;
+      border-radius: 8px;
+      text-transform: uppercase;
+      opacity: 0.8;
+      transition: opacity 0.2s, background 0.2s;
+    }
+
+    .nav-item a:hover, .nav-item a.active {
+      opacity: 1;
+      background: rgba(255, 255, 255, 0.15);
+    }
+
+    .theme-toggle-btn {
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: white;
+      padding: 8px 14px;
+      border-radius: 10px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      margin-left: 10px;
+    }
+
+    .theme-toggle-btn:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    .btn-sell-car {
+      background-color: #ef4444;
+      color: white;
+      padding: 10px 22px;
+      border-radius: 12px;
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      border: none;
+      cursor: pointer;
+      margin-left: 10px;
+      transition: background-color 0.2s;
+    }
+
+    .btn-sell-car:hover { background-color: #dc2626; }
+
+    .main-container {
+      max-width: 1300px;
+      width: 95%;
+      margin: 30px auto;
+      flex: 1;
+    }
+
+    .catalog-layout {
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      gap: 30px;
+      align-items: start;
+    }
+
+    .sidebar {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 20px;
+      padding: 24px;
+      box-shadow: 0 10px 30px var(--card-shadow);
+    }
+
+    .filter-group {
+      margin-bottom: 20px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .filter-group:last-child {
+      margin-bottom: 0;
+      padding-bottom: 0;
+      border-bottom: none;
+    }
+
+    .filter-header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 15px;
+      font-weight: 800;
+      color: var(--text-main);
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .filter-header-row span.arrow {
+      font-size: 11px;
+      color: var(--text-muted);
+      transition: transform 0.3s ease;
+    }
+
+    .filter-group.collapsed .filter-content {
+      display: none;
+    }
+
+    .filter-group.collapsed span.arrow {
+      transform: rotate(180deg);
+    }
+
+    .filter-content {
+      margin-top: 14px;
+    }
+
+    .checkbox-label {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-main);
+      margin-bottom: 10px;
+      cursor: pointer;
+    }
+
+    .checkbox-label:last-child {
+      margin-bottom: 0;
+    }
+
+    .checkbox-label input[type="checkbox"] {
+      accent-color: var(--accent);
+      width: 16px;
+      height: 16px;
+      margin-right: 10px;
+      cursor: pointer;
+    }
+
+    .checkbox-content {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .count-tag {
+      font-size: 12px;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    .price-inputs-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+
+    .price-box {
+      background: var(--control-bg);
+      border: 1px solid var(--control-border);
+      border-radius: 12px;
+      padding: 10px 12px;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .price-box span {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .range-slider-wrapper {
+      position: relative;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      margin-top: 6px;
+    }
+
+    .range-slider-wrapper input[type="range"] {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 100%;
+      height: 6px;
+      background: #cbd5e1;
+      border-radius: 3px;
+      outline: none;
+      position: relative;
+      z-index: 2;
+    }
+
+    [data-theme="dark"] .range-slider-wrapper input[type="range"] {
+      background: #374151;
+    }
+
+    .range-slider-wrapper input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: var(--accent);
+      cursor: pointer;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+      transition: transform 0.1s;
+    }
+
+    .range-slider-wrapper input[type="range"]::-webkit-slider-thumb:hover {
+      transform: scale(1.1);
+    }
+
+    .dual-range-container {
+      position: relative;
+      height: 30px;
+      margin-top: 10px;
+    }
+
+    .dual-range-container input[type="range"] {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 6px;
+      background: none;
+      pointer-events: none;
+      -webkit-appearance: none;
+      appearance: none;
+    }
+
+    .slider-track {
+      position: absolute;
+      left: 0;
+      top: 10px;
+      width: 100%;
+      height: 6px;
+      background: var(--control-border);
+      border-radius: 3px;
+      z-index: 1;
+    }
+
+    .slider-fill {
+      position: absolute;
+      top: 10px;
+      height: 6px;
+      background: var(--accent);
+      border-radius: 3px;
+      z-index: 2;
+    }
+
+    .dual-range-container input[type="range"]::-webkit-slider-runnable-track {
+      height: 6px;
+      background: none;
+      border: none;
+    }
+
+    .dual-range-container input[type="range"]::-webkit-slider-thumb {
+      height: 18px;
+      width: 18px;
+      border-radius: 50%;
+      background: var(--accent);
+      cursor: pointer;
+      pointer-events: auto;
+      -webkit-appearance: none;
+      margin-top: -6px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+      z-index: 3;
+      position: relative;
+    }
+
+    .range-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    .catalog-content {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .top-search-bar {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 15px 20px;
+      display: flex;
+      gap: 15px;
+      align-items: center;
+      box-shadow: 0 4px 15px var(--card-shadow);
+    }
+
+    .search-control {
+      width: 100%;
+      background: var(--control-bg);
+      border: 1px solid var(--control-border);
+      border-radius: 10px;
+      padding: 10px 14px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-main);
+      outline: none;
+    }
+
+    .search-control:focus { border-color: var(--accent); }
+
+    .cars-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 20px;
+    }
+
+    .car-card {
+      background: var(--bg-card);
+      border-radius: 16px;
+      padding: 15px;
+      box-shadow: 0 4px 15px var(--card-shadow);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      border: 1px solid var(--border-color);
+    }
+
+    .car-card:hover { transform: translateY(-4px); }
+
+    .car-img-box {
+      width: 100%;
+      height: 160px;
+      border-radius: 10px;
+      overflow: hidden;
+      margin-bottom: 12px;
+      background: var(--control-bg);
+      position: relative;
+    }
+
+    .car-img-box img { width: 100%; height: 100%; object-fit: cover; }
+
+    .car-tag-badge {
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      background: #ef4444;
+      color: white;
+      font-size: 10px;
+      font-weight: 800;
+      padding: 3px 8px;
+      border-radius: 6px;
+      text-transform: uppercase;
+    }
+
+    .car-title {
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--text-main);
+      margin-bottom: 4px;
+    }
+
+    .car-params-summary {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+      line-height: 1.4;
+    }
+
+    .car-footer {
+      border-top: 1px solid var(--border-color);
+      padding-top: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: auto;
+    }
+
+    .car-installment {
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--accent);
+    }
+
+    .car-installment span {
+      display: block;
+      font-size: 13px;
+      font-weight: 900;
+    }
+
+    .car-price { text-align: right; }
+    .car-price-label { font-size: 9px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; }
+    .car-price-val { font-size: 15px; font-weight: 900; color: var(--text-main); }
+
+    .page-view { display: none; }
+    .page-view.active { display: block; }
+
+    .detail-grid {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 30px;
+      background: var(--bg-card);
+      padding: 30px;
+      border-radius: 20px;
+      border: 1px solid var(--border-color);
+      box-shadow: 0 10px 30px var(--card-shadow);
+    }
+
+    .detail-main-img {
+      width: 100%;
+      height: 320px;
+      object-fit: cover;
+      border-radius: 14px;
+      margin-bottom: 12px;
+    }
+
+    .detail-thumbs {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+    }
+
+    .detail-thumbs img {
+      width: 100%;
+      height: 70px;
+      object-fit: cover;
+      border-radius: 8px;
+      cursor: pointer;
+      opacity: 0.6;
+      border: 2px solid transparent;
+    }
+
+    .detail-thumbs img.active { opacity: 1; border-color: var(--accent); }
+
+    .detail-info h1 {
+      font-size: 26px;
+      font-weight: 900;
+      margin-bottom: 6px;
+      color: var(--text-main);
+    }
+
+    .specs-table {
+      width: 100%;
+      font-size: 13px;
+      margin-bottom: 20px;
+      border-collapse: collapse;
+    }
+
+    .specs-table td {
+      padding: 7px 0;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .specs-table td.label { font-weight: 700; color: var(--text-muted); }
+    .specs-table td.val { font-weight: 800; color: var(--text-main); text-align: right; }
+
+    .action-buttons-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .btn-main-action {
+      background: var(--control-bg);
+      color: var(--text-main);
+      border: 1px solid var(--control-border);
+      padding: 14px;
+      border-radius: 12px;
+      font-size: 13px;
+      font-weight: 800;
+      cursor: pointer;
+      text-align: center;
+    }
+
+    .btn-main-action.active-mode {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: white;
+    }
+
+    .calc-container {
+      background: var(--bg-card);
+      border: 1px solid var(--control-border);
+      border-radius: 16px;
+      padding: 22px;
+      box-shadow: 0 15px 35px var(--card-shadow);
+      margin-bottom: 15px;
+    }
+
+    .calc-header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .calc-title {
+      font-size: 15px;
+      font-weight: 800;
+      color: var(--text-main);
+    }
+
+    .calc-interest-badge {
+      background: var(--control-bg);
+      color: var(--accent);
+      font-size: 12px;
+      font-weight: 800;
+      padding: 5px 10px;
+      border-radius: 8px;
+      border: 1px solid var(--control-border);
+    }
+
+    .calc-field-group { margin-bottom: 20px; }
+
+    .calc-label-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+    }
+
+    .calc-label-row span:last-child { color: var(--text-main); font-weight: 800; }
+
+    .calc-results-box {
+      background: var(--control-bg);
+      border-radius: 12px;
+      padding: 15px;
+      border: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .calc-res-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-muted);
+    }
+
+    .calc-res-row.highlight {
+      font-size: 14px;
+      color: var(--text-main);
+      border-top: 1px solid var(--border-color);
+      padding-top: 8px;
+    }
+
+    .calc-res-row span:last-child { font-weight: 900; color: var(--text-main); }
+    .calc-res-row.weekly span:last-child { color: var(--accent); font-size: 16px; }
+
+    .btn-submit-form {
+      background: #b91c1c;
+      color: white;
+      border: none;
+      width: 100%;
+      padding: 14px;
+      border-radius: 12px;
+      font-size: 13px;
+      font-weight: 800;
+      cursor: pointer;
+      letter-spacing: 0.5px;
+    }
+
+    .btn-submit-form:hover { background: #991b1b; }
+
+    .cash-content-box {
+      background: var(--bg-card);
+      border: 1px solid var(--control-border);
+      border-radius: 16px;
+      padding: 25px;
+      text-align: center;
+      margin-bottom: 15px;
+    }
+
+    .btn-back {
+      background: var(--bg-card);
+      color: var(--text-muted);
+      border: 1px solid var(--control-border);
+      padding: 10px 20px;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 12px;
+      cursor: pointer;
+      margin-bottom: 20px;
+    }
+
+    .btn-back:hover { color: var(--text-main); }
+
+    /* Styly pro stránku Výkup vozů */
+    .sell-form-container {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 20px;
+      padding: 40px;
+      box-shadow: 0 10px 30px var(--card-shadow);
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .sell-form-container h2 {
+      font-size: 24px;
+      font-weight: 900;
+      color: var(--text-main);
+      margin-bottom: 24px;
+      text-align: center;
+    }
+
+    .form-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .form-table td {
+      padding: 12px 0;
+      vertical-align: middle;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .form-table td.form-label {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-main);
+      width: 35%;
+    }
+
+    .form-table td.form-input-cell {
+      width: 65%;
+    }
+
+    .form-input, .form-select {
+      width: 100%;
+      background: var(--control-bg);
+      border: 1px solid var(--control-border);
+      border-radius: 10px;
+      padding: 10px 14px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-main);
+      outline: none;
+    }
+
+    .form-input:focus, .form-select:focus {
+      border-color: var(--accent);
+    }
+
+    .nested-tuning-box {
+      margin-top: 8px;
+      padding: 10px;
+      background: var(--control-bg);
+      border: 1px dashed var(--control-border);
+      border-radius: 8px;
+      display: none;
+    }
+
+    .nested-tuning-box label {
+      display: block;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+    }
+
+    footer {
+      background-color: var(--bg-body);
+      color: var(--text-muted);
+      height: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 700;
+      margin-top: auto;
+      border-top: 1px solid var(--border-color);
+    }
+  </style>
+</head>
+<body data-theme="light">
+
+  <header>
+    <div class="brand" onclick="showHome()">
+      <svg class="brand-logo" viewBox="0 0 24 24">
+        <path d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.22.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99zM6.85 7h10.29l1.04 3H5.81l1.04-3zM19 17H5v-4.66l.12-.34h13.76l.12.34V17z"/>
+      </svg>
+      <div class="brand-title">
+        VALEO
+        <span>CARS</span>
+      </div>
+    </div>
+
+    <nav>
+      <div class="nav-item"><a href="#" class="active" id="nav-home" onclick="showHome(); return false;">Domů</a></div>
+      <button class="theme-toggle-btn" id="themeToggleBtn" onclick="toggleTheme()">🌙 Tmavý režim</button>
+      <button class="btn-sell-car" onclick="showSellPage()">Prodat auto</button>
+    </nav>
+  </header>
+
+  <div class="main-container">
+
+    <!-- Domovská stránka (katalog) -->
+    <div id="home-view" class="page-view active">
+      <div class="catalog-layout">
+        
+        <aside class="sidebar">
+          <div class="filter-group" id="group-nabidka">
+            <div class="filter-header-row" onclick="toggleFilterGroup('group-nabidka')">
+              Nabídka vozů <span class="arrow">▲</span>
+            </div>
+            <div class="filter-content">
+              <label class="checkbox-label">
+                <div class="checkbox-content">
+                  <input type="checkbox" id="filterNove" onchange="filterCars()">
+                  Nově v nabídce
+                </div>
+                <span class="count-tag" id="count-nove">(0)</span>
+              </label>
+
+              <label class="checkbox-label">
+                <div class="checkbox-content">
+                  <input type="checkbox" id="filterZlevneno" onchange="filterCars()">
+                  Zlevněné vozy
+                </div>
+                <span class="count-tag" id="count-zlevneno">(0)</span>
+              </label>
+
+              <label class="checkbox-label">
+                <div class="checkbox-content">
+                  <input type="checkbox" id="filterFinancovani" onchange="filterCars()">
+                  Vozy s možnostmi financování
+                </div>
+                <span class="count-tag" id="count-financovani">(0)</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="filter-group" id="group-znacka">
+            <div class="filter-header-row" onclick="toggleFilterGroup('group-znacka')">
+              Značka a model <span class="arrow">▲</span>
+            </div>
+            <div class="filter-content">
+              <input type="text" id="searchInput" class="search-control" placeholder="Hledat značku, model..." oninput="filterCars()">
+            </div>
+          </div>
+
+          <div class="filter-group" id="group-cena">
+            <div class="filter-header-row" onclick="toggleFilterGroup('group-cena')">
+              Cena <span class="arrow">▲</span>
+            </div>
+            <div class="filter-content">
+              <div class="price-inputs-grid">
+                <div class="price-box">
+                  <span id="priceMinText">0</span> <span>Kč</span>
+                </div>
+                <div class="price-box">
+                  <span id="priceMaxText">0</span> <span>Kč</span>
+                </div>
+              </div>
+
+              <div class="dual-range-container">
+                <div class="slider-track"></div>
+                <div class="slider-fill" id="sliderFill"></div>
+                <input type="range" id="rangeMinPrice" min="0" max="100" value="0" step="1000" oninput="onDualSliderInput()">
+                <input type="range" id="rangeMaxPrice" min="0" max="100" value="100" step="1000" oninput="onDualSliderInput()">
+              </div>
+
+              <div class="range-labels">
+                <span id="sliderMinLabel">0 Kč</span>
+                <span id="sliderMaxLabel">0 Kč</span>
+              </div>
+            </div>
+          </div>
+
+        </aside>
+
+        <main class="catalog-content">
+          <div class="top-search-bar">
+            <div style="font-size: 18px; font-weight: 900; color: var(--text-main);">Aktuální nabídka vozidel</div>
+            <div style="font-size: 13px; font-weight: 600; color: var(--text-muted); margin-left: auto;" id="results-count-text">Nalezeno vozidel: 0</div>
+          </div>
+
+          <div class="cars-grid" id="home-cars-grid"></div>
+        </main>
+
+      </div>
+    </div>
+
+    <!-- Stránka Detail vozu -->
+    <div id="detail-view" class="page-view">
+      <button class="btn-back" onclick="showHome()">← Zpět na přehled</button>
+      
+      <div class="detail-grid">
+        <div>
+          <img id="d-main-img" class="detail-main-img" src="" alt="Auto">
+          <div class="detail-thumbs" id="d-thumbs"></div>
+          
+          <table class="specs-table" style="margin-top: 20px;">
+            <tr><td class="label">Stav tachometru:</td><td class="val" id="d-km">0 km</td></tr>
+            <tr><td class="label">VIN:</td><td class="val" id="d-vin">-</td></tr>
+            <tr><td class="label">Barva:</td><td class="val" id="d-color">-</td></tr>
+            <tr><td class="label">Úpravy:</td><td class="val" id="d-tuning">-</td></tr>
+          </table>
+        </div>
+
+        <div class="detail-info">
+          <h1 id="d-title">Název vozu</h1>
+          <p id="d-params-text" style="color: var(--text-muted); font-size: 13px; font-weight: 600; margin-bottom: 20px;"></p>
+          
+          <div class="action-buttons-grid">
+            <button class="btn-main-action active-mode" id="btn-mode-calc" onclick="switchMode('calc')">SPOČÍTAT SPLÁTKY</button>
+            <button class="btn-main-action" id="btn-mode-cash" onclick="switchMode('cash')">KOUPIT HOTOVĚ</button>
+          </div>
+
+          <div id="section-calc" class="calc-section">
+            <div class="calc-container">
+              <div class="calc-header-row">
+                <div class="calc-title">KALKULAČKA SPLÁTEK</div>
+                <div class="calc-interest-badge" id="lbl-interest-badge">Úrok 16.5%</div>
+              </div>
+
+              <div class="calc-field-group">
+                <div class="calc-label-row">
+                  <span>Doba splácení (3 - 26 týdnů):</span>
+                  <span id="lbl-weeks">14 týdnů</span>
+                </div>
+                <div class="range-slider-wrapper">
+                  <input type="range" id="rangeWeeks" min="3" max="26" value="14" oninput="updateCalculation()">
+                </div>
+              </div>
+
+              <div class="calc-field-group" style="margin-bottom: 15px;">
+                <div class="calc-label-row">
+                  <span>První splátka - akontace (0% - 80%):</span>
+                  <span id="lbl-down-pct">1 350 000 Kč (45%)</span>
+                </div>
+                <div class="range-slider-wrapper">
+                  <input type="range" id="rangeDown" min="0" max="80" step="5" value="45" oninput="updateCalculation()">
+                </div>
+              </div>
+
+              <div class="calc-results-box">
+                <div class="calc-res-row">
+                  <span>Akontace (ihned):</span>
+                  <span id="res-down-val">1 350 000 Kč</span>
+                </div>
+                <div class="calc-res-row weekly">
+                  <span>Týdenní splátka:</span>
+                  <span id="res-weekly-val">129 977 Kč / týdně</span>
+                </div>
+                <div class="calc-res-row">
+                  <span>Doba splácení:</span>
+                  <span id="res-weeks-val">14 týdnů</span>
+                </div>
+                <div class="calc-res-row highlight">
+                  <span>Celkově zaplatíte:</span>
+                  <span id="res-total-val">3 169 676 Kč</span>
+                </div>
+              </div>
+            </div>
+
+            <button class="btn-submit-form" onclick="alert('Žádost o financování byla odeslána!')">KONTAKTNÍ FORMULÁŘ</button>
+          </div>
+
+          <div id="section-cash" class="cash-section" style="display: none;">
+            <div class="cash-content-box">
+              <div style="font-size: 11px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; margin-bottom: 5px;">Celková cena hotově</div>
+              <div style="font-size: 28px; font-weight: 900; color: var(--accent); margin-bottom: 15px;" id="cash-price-val">0 Kč</div>
+              <div style="font-size: 12px; color: var(--text-muted); font-weight: 600; line-height: 1.5;">Okamžitý přepis vozidla na Vaše jméno na pobočce.</div>
+            </div>
+            <button class="btn-submit-form" onclick="alert('Nákup v hotovosti potvrzen!')">DOKONČIT NÁKUP HOTOVĚ</button>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- Stránka Prodat auto (Výkup) -->
+    <div id="sell-view" class="page-view">
+      <button class="btn-back" onclick="showHome()">← Zpět na přehled</button>
+
+      <div class="sell-form-container">
+        <h2>Formulář pro výkup vozidla</h2>
+        <form onsubmit="event.preventDefault(); alert('Formulář byl úspěšně odeslán!'); showHome();">
+          <table class="form-table">
+            <tr>
+              <td class="form-label">Jaký auto prodává (značka/model):</td>
+              <td class="form-input-cell">
+                <input type="text" class="form-input" placeholder="např. 2000 Mazda RX-7" required>
+              </td>
+            </tr>
+            <tr>
+              <td class="form-label">Jméno a příjmení:</td>
+              <td class="form-input-cell">
+                <input type="text" class="form-input" placeholder="Jan Novák" required>
+              </td>
+            </tr>
+            <tr>
+              <td class="form-label">Kontakt (tel. č. a email):</td>
+              <td class="form-input-cell">
+                <input type="text" class="form-input" placeholder="XXX-XXX, jméno.příjmení@post.ic" required>
+              </td>
+            </tr>
+            <tr>
+              <td class="form-label">Představa o ceně (Kč):</td>
+              <td class="form-input-cell">
+                <input type="text" class="form-input" placeholder="např. 300 000 Kč" required>
+              </td>
+            </tr>
+            <tr>
+              <td class="form-label">Úpravy na vozidle:</td>
+              <td class="form-input-cell">
+                <select class="form-select" id="sel-upravy" onchange="handleTuningMainChange()">
+                  <option value="bez">Bez úprav</option>
+                  <option value="upravy">S úpravami</option>
+                </select>
+
+                <!-- Vnořená kolonka pro link na protokol o technickém stavu při úpravách -->
+                <div id="tuning-nested-container" class="nested-tuning-box">
+                  <div>
+                    <label>Odkaz na protokol o technickém stavu vozidla</label>
+                    <input type="url" class="form-input" placeholder="https://example.com/protokol.pdf">
+                  </div>
+                </div>
+              </td>
+            </tr>
+          </table>
+
+          <button type="submit" class="btn-submit-form" style="margin-top: 25px;">Odeslat nabídku k výkupu</button>
+        </form>
+      </div>
+    </div>
+
+  </div>
+
+  <footer>
+    VALEO CARS – Váš spolehlivý partner pro nákup vozidel
+  </footer>
+
+  <script>
+    const carsData = [
+      {
+        id: 1,
+        title: "2000 Mazda RX-7",
+        params: "Sportovní kupé · RWD · Twin-Turbo",
+        km: "1 769 km",
+        vin: "4544",
+        color: "Fialová",
+        tuning: "ANO",
+        price: "3 000 000 Kč",
+        rawPrice: 3000000,
+        nove: true,
+        zlevneno: false,
+        financovani: true,
+        img: "images/rx7.png",
+        gallery: [
+          "images/rx7.png",
+          "images/rx72.png",
+          "images/rx73.png"
+        ]
+      }
+    ];
+
+    let currentSelectedCarPrice = 0;
+    let minCarPrice = 0;
+    let maxCarPrice = 0;
+
+    function toggleFilterGroup(groupId) {
+      const group = document.getElementById(groupId);
+      group.classList.toggle('collapsed');
+    }
+
+    function initPriceRange() {
+      if (carsData.length === 0) return;
+      const prices = carsData.map(c => c.rawPrice);
+      minCarPrice = Math.min(...prices);
+      maxCarPrice = Math.max(...prices);
+
+      const rangeMin = document.getElementById('rangeMinPrice');
+      const rangeMax = document.getElementById('rangeMaxPrice');
+
+      rangeMin.min = minCarPrice;
+      rangeMin.max = maxCarPrice;
+      rangeMin.value = minCarPrice;
+
+      rangeMax.min = minCarPrice;
+      rangeMax.max = maxCarPrice;
+      rangeMax.value = maxCarPrice;
+
+      document.getElementById('sliderMinLabel').innerText = minCarPrice.toLocaleString() + ' Kč';
+      document.getElementById('sliderMaxLabel').innerText = maxCarPrice.toLocaleString() + ' Kč';
+      
+      updateDualSliderUI();
+    }
+
+    function onDualSliderInput() {
+      const rangeMin = document.getElementById('rangeMinPrice');
+      const rangeMax = document.getElementById('rangeMaxPrice');
+
+      let minVal = parseInt(rangeMin.value);
+      let maxVal = parseInt(rangeMax.value);
+
+      if (minVal > maxVal) {
+        rangeMin.value = maxVal;
+        minVal = maxVal;
+      }
+
+      updateDualSliderUI();
+      filterCars();
+    }
+
+    function updateDualSliderUI() {
+      const rangeMin = document.getElementById('rangeMinPrice');
+      const rangeMax = document.getElementById('rangeMaxPrice');
+      
+      let minVal = parseInt(rangeMin.value);
+      let maxVal = parseInt(rangeMax.value);
+
+      document.getElementById('priceMinText').innerText = minVal.toLocaleString();
+      document.getElementById('priceMaxText').innerText = maxVal.toLocaleString();
+
+      const minPercent = maxCarPrice === minCarPrice ? 0 : ((minVal - minCarPrice) / (maxCarPrice - minCarPrice)) * 100;
+      const maxPercent = maxCarPrice === minCarPrice ? 100 : ((maxVal - minCarPrice) / (maxCarPrice - minCarPrice)) * 100;
+
+      const fill = document.getElementById('sliderFill');
+      fill.style.left = minPercent + '%';
+      fill.style.width = (maxPercent - minPercent) + '%';
+    }
+
+    function toggleTheme() {
+      const body = document.body;
+      const btn = document.getElementById('themeToggleBtn');
+      if (body.getAttribute('data-theme') === 'dark') {
+        body.setAttribute('data-theme', 'light');
+        btn.innerHTML = '🌙 Tmavý režim';
+      } else {
+        body.setAttribute('data-theme', 'dark');
+        btn.innerHTML = '☀️ Světlý režim';
+      }
+    }
+
+    function getMinInstallment(rawPrice) {
+      const weeks = 14;
+      const downPct = 45;
+      
+      const downAmt = rawPrice * (downPct / 100);
+      const remaining = rawPrice - downAmt;
+      const baseInterestPct = 12 + (weeks * 0.4);
+      const fee = 15000 + (remaining * 0.04);
+      const total = remaining * (1 + baseInterestPct / 100) + fee;
+      return Math.round(total / weeks);
+    }
+
+    function updateCounts() {
+      document.getElementById('count-nove').innerText = `(${carsData.filter(c => c.nove).length})`;
+      document.getElementById('count-zlevneno').innerText = `(${carsData.filter(c => c.zlevneno).length})`;
+      document.getElementById('count-financovani').innerText = `(${carsData.filter(c => c.financovani).length})`;
+    }
+
+    function renderCarsList(listToRender) {
+      const grid = document.getElementById('home-cars-grid');
+      document.getElementById('results-count-text').innerText = `Nalezeno vozidel: ${listToRender.length}`;
+
+      if (listToRender.length === 0) {
+        grid.innerHTML = `<p style="grid-column: 1/-1; text-align: center; padding: 40px; font-weight: 600; color: var(--text-muted);">Žádná vozidla nenalezena.</p>`;
+        return;
+      }
+
+      grid.innerHTML = listToRender.map(car => {
+        const minPayment = getMinInstallment(car.rawPrice);
+        return `
+          <div class="car-card" onclick="openDetail(${car.id})">
+            <div class="car-img-box">
+              <img src="${car.img}" alt="${car.title}">
+              ${car.nove ? '<div class="car-tag-badge">Novinka</div>' : ''}
+            </div>
+            <div class="car-title">${car.title}</div>
+            <div class="car-params-summary">VIN: <b>${car.vin}</b> · Najeto: <b>${car.km}</b> · Barva: ${car.color}</div>
+            <div class="car-footer">
+              <div class="car-installment">Splátka<span>od ${minPayment.toLocaleString()} Kč</span></div>
+              <div class="car-price">
+                <div class="car-price-label">Cena</div>
+                <div class="car-price-val">${car.price}</div>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function filterCars() {
+      const query = document.getElementById('searchInput').value.toLowerCase().trim();
+      const currentMinPrice = parseInt(document.getElementById('rangeMinPrice').value);
+      const currentMaxPrice = parseInt(document.getElementById('rangeMaxPrice').value);
+
+      const fNove = document.getElementById('filterNove').checked;
+      const fZlevneno = document.getElementById('filterZlevneno').checked;
+      const fFinancovani = document.getElementById('filterFinancovani').checked;
+
+      let filtered = carsData.filter(car => {
+        const matchesQuery = car.title.toLowerCase().includes(query) || car.params.toLowerCase().includes(query);
+        const matchesPrice = car.rawPrice >= currentMinPrice && car.rawPrice <= currentMaxPrice;
+
+        if (fNove && !car.nove) return false;
+        if (fZlevneno && !car.zlevneno) return false;
+        if (fFinancovani && !car.financovani) return false;
+
+        return matchesQuery && matchesPrice;
+      });
+
+      renderCarsList(filtered);
+    }
+
+    function openDetail(id) {
+      const car = carsData.find(c => c.id === id);
+      if(!car) return;
+
+      currentSelectedCarPrice = car.rawPrice;
+
+      document.getElementById('d-title').innerText = car.title;
+      document.getElementById('d-params-text').innerText = car.params;
+      document.getElementById('d-km').innerText = car.km;
+      document.getElementById('d-vin').innerText = car.vin;
+      document.getElementById('d-color').innerText = car.color;
+      document.getElementById('d-tuning').innerText = car.tuning;
+      document.getElementById('cash-price-val').innerText = car.price;
+
+      document.getElementById('d-main-img').src = car.gallery[0];
+      document.getElementById('d-thumbs').innerHTML = car.gallery.map((img, idx) => `
+        <img src="${img}" class="${idx === 0 ? 'active' : ''}" onclick="document.getElementById('d-main-img').src='${img}'">
+      `).join('');
+
+      document.getElementById('rangeWeeks').value = 14;
+      document.getElementById('rangeDown').value = 45;
+      updateCalculation();
+
+      switchMode('calc');
+
+      document.querySelectorAll('.page-view').forEach(el => el.classList.remove('active'));
+      document.getElementById('detail-view').classList.add('active');
+      window.scrollTo(0,0);
+    }
+
+    function updateCalculation() {
+      const weeks = parseInt(document.getElementById('rangeWeeks').value);
+      const downPct = parseInt(document.getElementById('rangeDown').value);
+      
+      const downPaymentAmt = Math.round(currentSelectedCarPrice * (downPct / 100));
+      const remainingAmount = currentSelectedCarPrice - downPaymentAmt;
+      
+      let interestRate = 12 + (weeks * 0.4) + (downPct * 0.05);
+      interestRate = Math.round(interestRate * 10) / 10;
+
+      let adminFee = 15000 + (remainingAmount * 0.04);
+      
+      const totalWithInterest = Math.round(remainingAmount * (1 + interestRate / 100) + adminFee);
+      const weeklyPayment = weeks > 0 ? Math.round(totalWithInterest / weeks) : 0;
+      const absoluteTotal = downPaymentAmt + totalWithInterest;
+
+      document.getElementById('lbl-interest-badge').innerText = `Úrok ${interestRate}%`;
+      document.getElementById('lbl-weeks').innerText = weeks + ' týdnů';
+      document.getElementById('lbl-down-pct').innerText = downPaymentAmt.toLocaleString() + ' Kč (' + downPct + '%)';
+      
+      document.getElementById('res-down-val').innerText = downPaymentAmt.toLocaleString() + ' Kč';
+      document.getElementById('res-weekly-val').innerText = weeklyPayment.toLocaleString() + ' Kč / týdně';
+      document.getElementById('res-weeks-val').innerText = weeks + ' týdnů';
+      document.getElementById('res-total-val').innerText = absoluteTotal.toLocaleString() + ' Kč';
+    }
+
+    function switchMode(mode) {
+      const btnCalc = document.getElementById('btn-mode-calc');
+      const btnCash = document.getElementById('btn-mode-cash');
+      const secCalc = document.getElementById('section-calc');
+      const secCash = document.getElementById('section-cash');
+
+      if(mode === 'calc') {
+        btnCalc.classList.add('active-mode');
+        btnCash.classList.remove('active-mode');
+        secCalc.style.display = 'block';
+        secCash.style.display = 'none';
+      } else {
+        btnCash.classList.add('active-mode');
+        btnCalc.classList.remove('active-mode');
+        secCash.style.display = 'block';
+        secCalc.style.display = 'none';
+      }
+    }
+
+    function showHome() {
+      document.querySelectorAll('.page-view').forEach(el => el.classList.remove('active'));
+      document.getElementById('home-view').classList.add('active');
+      document.getElementById('searchInput').value = '';
+      
+      document.getElementById('rangeMinPrice').value = minCarPrice;
+      document.getElementById('rangeMaxPrice').value = maxCarPrice;
+      updateDualSliderUI();
+      
+      document.querySelectorAll('.sidebar input[type="checkbox"]').forEach(cb => cb.checked = false);
+      filterCars();
+      window.scrollTo(0,0);
+    }
+
+    function showSellPage() {
+      document.querySelectorAll('.page-view').forEach(el => el.classList.remove('active'));
+      document.getElementById('sell-view').classList.add('active');
+      window.scrollTo(0,0);
+    }
+
+    function handleTuningMainChange() {
+      const val = document.getElementById('sel-upravy').value;
+      const nested = document.getElementById('tuning-nested-container');
+      if (val === 'upravy') {
+        nested.style.display = 'block';
+      } else {
+        nested.style.display = 'none';
+      }
+    }
+
+    initPriceRange();
+    updateCounts();
+    filterCars();
+  </script>
+</body>
+</html>
