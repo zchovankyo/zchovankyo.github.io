@@ -994,6 +994,7 @@
       border-top: 1px solid var(--border-color);
     }
 
+    /* MEDIA QUERIES PRO RESPONZIVITU (PC & MOBIL) */
     @media (max-width: 1024px) {
       .lightbox-prev { left: 10px; }
       .lightbox-next { right: 10px; }
@@ -1002,6 +1003,61 @@
       }
       .sidebar-column {
         position: static;
+      }
+    }
+
+    @media (max-width: 768px) {
+      header {
+        height: auto;
+        padding: 15px;
+        flex-direction: column;
+        gap: 15px;
+      }
+      nav {
+        width: 100%;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+      .nav-item a, .theme-toggle-btn, .btn-sell-car {
+        margin: 0;
+        padding: 8px 12px;
+        font-size: 11px;
+      }
+      .detail-grid {
+        grid-template-columns: 1fr;
+        padding: 15px;
+      }
+      .detail-main-img {
+        height: 220px;
+      }
+      .action-buttons-grid {
+        grid-template-columns: 1fr;
+      }
+      .sell-form-container {
+        padding: 20px;
+      }
+      .form-table td, .user-form-table td {
+        display: block;
+        width: 100% !important;
+      }
+      .form-table td.form-label, .user-form-table td.u-label {
+        border-bottom: none;
+        padding-bottom: 5px;
+      }
+      .form-table td.form-input-cell, .user-form-table td.u-input {
+        padding-top: 0;
+      }
+      .calc-container {
+        padding: 15px;
+      }
+      .top-search-bar {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+      }
+      .top-search-bar div:last-child {
+        margin-left: 0 !important;
       }
     }
   </style>
@@ -1727,329 +1783,298 @@
       renderCarsList(filtered);
     }
 
+    function switchView(viewId) {
+      document.querySelectorAll('.page-view').forEach(v => v.classList.remove('active'));
+      document.getElementById(viewId).classList.add('active');
+
+      document.querySelectorAll('.nav-item a').forEach(el => el.classList.remove('active'));
+      if (viewId === 'home-view') document.getElementById('nav-home').classList.add('active');
+
+      window.scrollTo(0,0);
+    }
+
+    function showHome() { switchView('home-view'); }
+
+    function showSellPage() {
+      switchView('sell-view');
+      document.getElementById('sell-alert').style.display = 'none';
+      document.getElementById('sell-car-model').value = '';
+      document.getElementById('sell-name').value = '';
+      document.getElementById('sell-surname').value = '';
+      document.getElementById('sell-phone').value = '';
+      document.getElementById('sell-email').value = '';
+      document.getElementById('sell-price-idea').value = '';
+      document.getElementById('sel-upravy').value = 'bez';
+      document.getElementById('sell-tuning-link').value = '';
+      handleTuningMainChange();
+      
+      hideInlineError('sell-name-err');
+      hideInlineError('sell-surname-err');
+      hideInlineError('sell-phone-err');
+      hideInlineError('sell-email-err');
+    }
+
+    function handleTuningMainChange() {
+      const val = document.getElementById('sel-upravy').value;
+      const box = document.getElementById('tuning-nested-container');
+      if (val === 'upravy') {
+        box.style.display = 'block';
+      } else {
+        box.style.display = 'none';
+      }
+    }
+
+    function changeMainImage(imgUrl, index) {
+      document.getElementById('d-main-img').src = imgUrl;
+      currentImageIndex = index;
+      
+      document.querySelectorAll('.detail-thumbs img').forEach(el => el.classList.remove('active'));
+      const activeThumb = document.getElementById('thumb-' + index);
+      if (activeThumb) activeThumb.classList.add('active');
+    }
+
     function openDetail(id) {
       const car = carsData.find(c => c.id === id);
-      if(!car) return;
+      if (!car) return;
 
       currentSelectedCarPrice = car.rawPrice;
       currentCarGallery = car.gallery;
-      currentImageIndex = 0;
-
+      
       document.getElementById('d-title').innerText = car.title;
       document.getElementById('d-params-text').innerText = car.params;
       document.getElementById('d-km').innerText = car.km;
       document.getElementById('d-vin').innerText = car.vin;
       document.getElementById('d-color').innerText = car.color;
       document.getElementById('d-tuning').innerText = car.tuning;
+
+      const thumbHtml = car.gallery.map((imgUrl, i) => {
+        return `<img src="${imgUrl}" id="thumb-${i}" onclick="changeMainImage('${imgUrl}', ${i})">`;
+      }).join('');
+      document.getElementById('d-thumbs').innerHTML = thumbHtml;
+      
+      changeMainImage(car.gallery[0], 0);
+
       document.getElementById('cash-price-val').innerText = car.price;
+
+      if (!car.financovani) {
+        document.getElementById('btn-mode-calc').style.display = 'none';
+        document.getElementById('action-buttons-grid').style.gridTemplateColumns = '1fr';
+        switchMode('cash');
+      } else {
+        document.getElementById('btn-mode-calc').style.display = 'block';
+        document.getElementById('action-buttons-grid').style.gridTemplateColumns = '1fr 1fr';
+        switchMode('calc');
+        updateCalculation();
+      }
+
+      switchView('detail-view');
 
       document.getElementById('calc-alert').style.display = 'none';
       document.getElementById('cash-alert').style.display = 'none';
-      document.getElementById('calc-user-form').style.display = 'none';
-      document.getElementById('cash-user-form').style.display = 'none';
-      
-      hideInlineError('calc-name-err');
-      hideInlineError('calc-surname-err');
-      hideInlineError('calc-phone-err');
-      hideInlineError('calc-email-err');
-      hideInlineError('cash-name-err');
-      hideInlineError('cash-surname-err');
-      hideInlineError('cash-phone-err');
-      hideInlineError('cash-email-err');
+      document.getElementById('calc-user-form').style.display = 'block';
+      document.getElementById('cash-user-form').style.display = 'block';
+      document.getElementById('btn-calc-submit').style.display = 'block';
+      document.getElementById('btn-cash-submit').style.display = 'block';
 
-      document.getElementById('btn-calc-submit').innerText = 'Požádat o financování vozu';
-      document.getElementById('btn-cash-submit').innerText = 'Rezervovat vůz';
-      
-      document.getElementById('calc-name').value = '';
-      document.getElementById('calc-surname').value = '';
-      document.getElementById('calc-phone').value = '';
-      document.getElementById('calc-email').value = '';
-      document.getElementById('cash-name').value = '';
-      document.getElementById('cash-surname').value = '';
-      document.getElementById('cash-phone').value = '';
-      document.getElementById('cash-email').value = '';
+      // Reset values & errors
+      ['calc', 'cash'].forEach(prefix => {
+        document.getElementById(`${prefix}-name`).value = '';
+        document.getElementById(`${prefix}-surname`).value = '';
+        document.getElementById(`${prefix}-phone`).value = '';
+        document.getElementById(`${prefix}-email`).value = '';
+        hideInlineError(`${prefix}-name-err`);
+        hideInlineError(`${prefix}-surname-err`);
+        hideInlineError(`${prefix}-phone-err`);
+        hideInlineError(`${prefix}-email-err`);
+      });
+    }
 
-      updateGalleryView();
+    function switchMode(mode) {
+      document.getElementById('btn-mode-calc').classList.remove('active-mode');
+      document.getElementById('btn-mode-cash').classList.remove('active-mode');
+      document.getElementById('section-calc').style.display = 'none';
+      document.getElementById('section-cash').style.display = 'none';
 
-      const actionButtonsGrid = document.getElementById('action-buttons-grid');
-      const sectionCalc = document.getElementById('section-calc');
-      const sectionCash = document.getElementById('section-cash');
-
-      if (!car.financovani) {
-        actionButtonsGrid.style.display = 'none';
-        sectionCalc.style.display = 'none';
-        sectionCash.style.display = 'block';
+      if (mode === 'calc') {
+        document.getElementById('btn-mode-calc').classList.add('active-mode');
+        document.getElementById('section-calc').style.display = 'block';
       } else {
-        actionButtonsGrid.style.display = 'grid';
-        document.getElementById('rangeWeeks').value = 14;
-        document.getElementById('rangeDown').value = 45;
-        updateCalculation();
-        switchMode('calc');
+        document.getElementById('btn-mode-cash').classList.add('active-mode');
+        document.getElementById('section-cash').style.display = 'block';
+      }
+    }
+
+    function updateCalculation() {
+      const weeks = parseInt(document.getElementById('rangeWeeks').value);
+      const downPct = parseInt(document.getElementById('rangeDown').value);
+      const price = currentSelectedCarPrice;
+
+      const downAmt = price * (downPct / 100);
+      const remaining = price - downAmt;
+
+      const baseInterestPct = 12 + (weeks * 0.4); 
+      
+      const fee = 15000 + (remaining * 0.04);
+      
+      let total = remaining * (1 + baseInterestPct / 100) + fee;
+      
+      if (price === 0) total = 0;
+
+      const weeklyPay = Math.round(total / weeks);
+
+      document.getElementById('lbl-weeks').innerText = `${weeks} týdnů`;
+      document.getElementById('lbl-down-pct').innerText = `${downAmt.toLocaleString()} Kč (${downPct}%)`;
+      document.getElementById('lbl-interest-badge').innerText = `Úrok ${baseInterestPct.toFixed(1)}%`;
+      
+      document.getElementById('res-down-val').innerText = `${downAmt.toLocaleString()} Kč`;
+      document.getElementById('res-weekly-val').innerText = `${weeklyPay.toLocaleString()} Kč / týdně`;
+      document.getElementById('res-weeks-val').innerText = `${weeks} týdnů`;
+      document.getElementById('res-total-val').innerText = `${(downAmt + total).toLocaleString()} Kč`;
+    }
+
+    function validateFormFields(prefix) {
+      const name = document.getElementById(`${prefix}-name`).value.trim();
+      const surname = document.getElementById(`${prefix}-surname`).value.trim();
+      const phone = document.getElementById(`${prefix}-phone`).value.trim();
+      const email = document.getElementById(`${prefix}-email`).value.trim();
+      
+      let isValid = true;
+      
+      if (!name) { showInlineError(`${prefix}-name-err`); isValid = false; }
+      else { hideInlineError(`${prefix}-name-err`); }
+
+      if (!surname) { showInlineError(`${prefix}-surname-err`); isValid = false; }
+      else { hideInlineError(`${prefix}-surname-err`); }
+
+      if (!validatePhoneFormat(phone)) { showInlineError(`${prefix}-phone-err`); isValid = false; }
+      else { hideInlineError(`${prefix}-phone-err`); }
+
+      if (!validateEmailFormat(email)) { showInlineError(`${prefix}-email-err`); isValid = false; }
+      else { hideInlineError(`${prefix}-email-err`); }
+
+      return { isValid, data: { name, surname, phone, email } };
+    }
+
+    function handleFinancingAction() {
+      const validation = validateFormFields('calc');
+      if (!validation.isValid) return;
+
+      const weeks = document.getElementById('rangeWeeks').value;
+      const downAmt = document.getElementById('res-down-val').innerText;
+      const weekly = document.getElementById('res-weekly-val').innerText;
+      const total = document.getElementById('res-total-val').innerText;
+      const title = document.getElementById('d-title').innerText;
+      const vin = document.getElementById('d-vin').innerText;
+      
+      sendToDiscord(DISCORD_WEBHOOKS.financovani, "Nová žádost o financování", {
+        "Vozidlo": title,
+        "VIN": vin,
+        "Jméno": validation.data.name,
+        "Příjmení": validation.data.surname,
+        "Telefon": validation.data.phone,
+        "Email": validation.data.email,
+        "Délka splácení": `${weeks} týdnů`,
+        "Akontace": downAmt,
+        "Týdenní splátka": weekly,
+        "Celkem k úhradě": total
+      }, 0x3498db);
+
+      document.getElementById('calc-alert').style.display = 'flex';
+      document.getElementById('calc-user-form').style.display = 'none';
+      document.getElementById('btn-calc-submit').style.display = 'none';
+    }
+
+    function handleCashAction() {
+      const validation = validateFormFields('cash');
+      if (!validation.isValid) return;
+
+      const title = document.getElementById('d-title').innerText;
+      const vin = document.getElementById('d-vin').innerText;
+      const price = document.getElementById('cash-price-val').innerText;
+
+      sendToDiscord(DISCORD_WEBHOOKS.koupe, "Nová žádost o koupi (Hotově)", {
+        "Vozidlo": title,
+        "VIN": vin,
+        "Jméno": validation.data.name,
+        "Příjmení": validation.data.surname,
+        "Telefon": validation.data.phone,
+        "Email": validation.data.email,
+        "Cena vozu": price
+      }, 0x2ecc71);
+
+      document.getElementById('cash-alert').style.display = 'flex';
+      document.getElementById('cash-user-form').style.display = 'none';
+      document.getElementById('btn-cash-submit').style.display = 'none';
+    }
+
+    function handleSellSubmit(event) {
+      event.preventDefault();
+      
+      const validation = validateFormFields('sell');
+      if (!validation.isValid) return;
+
+      const model = document.getElementById('sell-car-model').value;
+      const priceIdea = document.getElementById('sell-price-idea').value;
+      
+      const tuningVal = document.getElementById('sel-upravy').value;
+      let tuningText = "Bez úprav";
+      let linkText = "-";
+      if (tuningVal === 'upravy') {
+        tuningText = "S úpravami";
+        const link = document.getElementById('sell-tuning-link').value;
+        if (link) linkText = link;
       }
 
-      document.querySelectorAll('.page-view').forEach(el => el.classList.remove('active'));
-      document.getElementById('detail-view').classList.add('active');
-      window.scrollTo(0,0);
-    }
+      sendToDiscord(DISCORD_WEBHOOKS.prodej, "Nová nabídka k výkupu vozidla", {
+        "Vozidlo": model,
+        "Jméno": validation.data.name,
+        "Příjmení": validation.data.surname,
+        "Telefon": validation.data.phone,
+        "Email": validation.data.email,
+        "Představa o ceně": priceIdea,
+        "Úpravy na voze": tuningText,
+        "Odkaz na protokol": linkText
+      }, 0xe74c3c);
 
-    function selectGalleryImage(index) {
-      currentImageIndex = index;
-      updateGalleryView();
-    }
-
-    function updateGalleryView() {
-      document.getElementById('d-main-img').src = currentCarGallery[currentImageIndex];
-      
-      const thumbsContainer = document.getElementById('d-thumbs');
-      thumbsContainer.innerHTML = currentCarGallery.map((img, idx) => `
-        <img src="${img}" class="${idx === currentImageIndex ? 'active' : ''}" onclick="selectGalleryImage(${idx})">
-      `).join('');
+      document.getElementById('sell-alert').style.display = 'flex';
+      event.target.reset();
+      handleTuningMainChange();
     }
 
     function openLightbox() {
-      const modal = document.getElementById('lightboxModal');
-      const lightboxImg = document.getElementById('lightboxImg');
-      lightboxImg.src = currentCarGallery[currentImageIndex];
-      modal.classList.add('active');
+      if (currentCarGallery.length > 0) {
+        document.getElementById('lightboxImg').src = currentCarGallery[currentImageIndex];
+        document.getElementById('lightboxModal').classList.add('active');
+      }
     }
 
     function closeLightbox() {
       document.getElementById('lightboxModal').classList.remove('active');
     }
 
-    function changeLightboxImage(direction) {
-      currentImageIndex += direction;
-      if (currentImageIndex < 0) {
-        currentImageIndex = currentCarGallery.length - 1;
-      } else if (currentImageIndex >= currentCarGallery.length) {
-        currentImageIndex = 0;
-      }
+    function changeLightboxImage(dir) {
+      event.stopPropagation();
+      currentImageIndex += dir;
+      if (currentImageIndex < 0) currentImageIndex = currentCarGallery.length - 1;
+      if (currentImageIndex >= currentCarGallery.length) currentImageIndex = 0;
+      
       document.getElementById('lightboxImg').src = currentCarGallery[currentImageIndex];
-      updateGalleryView();
     }
 
-    function updateCalculation() {
-      const weeks = parseInt(document.getElementById('rangeWeeks').value);
-      const downPct = parseInt(document.getElementById('rangeDown').value);
-      
-      const downPaymentAmt = Math.round(currentSelectedCarPrice * (downPct / 100));
-      const remainingAmount = currentSelectedCarPrice - downPaymentAmt;
-      
-      let interestRate = 12 + (weeks * 0.4) + (downPct * 0.05);
-      interestRate = Math.round(interestRate * 10) / 10;
+    window.onload = () => {
+      initPriceRange();
+      updateCounts();
+      renderCarsList(carsData);
+    };
 
-      let adminFee = 15000 + (remainingAmount * 0.04);
-      
-      const totalWithInterest = Math.round(remainingAmount * (1 + interestRate / 100) + adminFee);
-      const weeklyPayment = weeks > 0 ? Math.round(totalWithInterest / weeks) : 0;
-      const absoluteTotal = downPaymentAmt + totalWithInterest;
-
-      document.getElementById('lbl-interest-badge').innerText = `Úrok ${interestRate}%`;
-      document.getElementById('lbl-weeks').innerText = weeks + ' týdnů';
-      document.getElementById('lbl-down-pct').innerText = downPaymentAmt.toLocaleString() + ' Kč (' + downPct + '%)';
-      
-      document.getElementById('res-down-val').innerText = downPaymentAmt.toLocaleString() + ' Kč';
-      document.getElementById('res-weekly-val').innerText = weeklyPayment.toLocaleString() + ' Kč / týdně';
-      document.getElementById('res-weeks-val').innerText = weeks + ' týdnů';
-      document.getElementById('res-total-val').innerText = absoluteTotal.toLocaleString() + ' Kč';
-    }
-
-    function switchMode(mode) {
-      const btnCalc = document.getElementById('btn-mode-calc');
-      const btnCash = document.getElementById('btn-mode-cash');
-      const secCalc = document.getElementById('section-calc');
-      const secCash = document.getElementById('section-cash');
-
-      document.getElementById('calc-alert').style.display = 'none';
-      document.getElementById('cash-alert').style.display = 'none';
-      document.getElementById('calc-user-form').style.display = 'none';
-      document.getElementById('cash-user-form').style.display = 'none';
-      
-      hideInlineError('calc-name-err');
-      hideInlineError('calc-surname-err');
-      hideInlineError('calc-phone-err');
-      hideInlineError('calc-email-err');
-      hideInlineError('cash-name-err');
-      hideInlineError('cash-surname-err');
-      hideInlineError('cash-phone-err');
-      hideInlineError('cash-email-err');
-
-      document.getElementById('btn-calc-submit').innerText = 'Požádat o financování vozu';
-      document.getElementById('btn-cash-submit').innerText = 'Rezervovat vůz';
-
-      if(mode === 'calc') {
-        btnCalc.classList.add('active-mode');
-        btnCash.classList.remove('active-mode');
-        secCalc.style.display = 'block';
-        secCash.style.display = 'none';
-      } else {
-        btnCash.classList.add('active-mode');
-        btnCalc.classList.remove('active-mode');
-        secCash.style.display = 'block';
-        secCalc.style.display = 'none';
+    document.addEventListener('keydown', (e) => {
+      if (document.getElementById('lightboxModal').classList.contains('active')) {
+        if (e.key === 'Escape') closeLightbox();
+        if (e.key === 'ArrowRight') changeLightboxImage(1);
+        if (e.key === 'ArrowLeft') changeLightboxImage(-1);
       }
-    }
+    });
 
-    function handleFinancingAction() {
-      const formBox = document.getElementById('calc-user-form');
-      const submitBtn = document.getElementById('btn-calc-submit');
-
-      if (formBox.style.display !== 'block') {
-        formBox.style.display = 'block';
-        submitBtn.innerText = 'Odeslat žádost';
-      } else {
-        const name = document.getElementById('calc-name').value.trim();
-        const surname = document.getElementById('calc-surname').value.trim();
-        const phone = document.getElementById('calc-phone').value.trim();
-        const email = document.getElementById('calc-email').value.trim();
-
-        let hasError = false;
-
-        if (!name) { showInlineError('calc-name-err'); hasError = true; } else { hideInlineError('calc-name-err'); }
-        if (!surname) { showInlineError('calc-surname-err'); hasError = true; } else { hideInlineError('calc-surname-err'); }
-        if (!validatePhoneFormat(phone)) { showInlineError('calc-phone-err'); hasError = true; } else { hideInlineError('calc-phone-err'); }
-        if (!validateEmailFormat(email)) { showInlineError('calc-email-err'); hasError = true; } else { hideInlineError('calc-email-err'); }
-
-        if (hasError) return;
-
-        // Získání parametrů financování pro Discord
-        const weeks = document.getElementById('rangeWeeks').value;
-        const downPct = document.getElementById('rangeDown').value;
-        const downVal = document.getElementById('res-down-val').innerText;
-        const weeklyVal = document.getElementById('res-weekly-val').innerText;
-        const totalVal = document.getElementById('res-total-val').innerText;
-        const carTitle = document.getElementById('d-title').innerText;
-
-        sendToDiscord(DISCORD_WEBHOOKS.financovani, 'Nová žádost o financování vozu', {
-          'Jméno': name,
-          'Příjmení': surname,
-          'Telefon': phone,
-          'Email': email,
-          'Zvolený vůz': carTitle,
-          'Doba splácení': `${weeks} týdnů`,
-          'Akontace': `${downVal} (${downPct}%)`,
-          'Týdenní splátka': weeklyVal,
-          'Celková cena': totalVal
-        }, 2555904);
-
-        formBox.style.display = 'none';
-        submitBtn.style.display = 'none';
-        document.getElementById('calc-alert').style.display = 'flex';
-      }
-    }
-
-    function handleCashAction() {
-      const formBox = document.getElementById('cash-user-form');
-      const submitBtn = document.getElementById('btn-cash-submit');
-
-      if (formBox.style.display !== 'block') {
-        formBox.style.display = 'block';
-        submitBtn.innerText = 'Potvrdit rezervaci';
-      } else {
-        const name = document.getElementById('cash-name').value.trim();
-        const surname = document.getElementById('cash-surname').value.trim();
-        const phone = document.getElementById('cash-phone').value.trim();
-        const email = document.getElementById('cash-email').value.trim();
-
-        let hasError = false;
-
-        if (!name) { showInlineError('cash-name-err'); hasError = true; } else { hideInlineError('cash-name-err'); }
-        if (!surname) { showInlineError('cash-surname-err'); hasError = true; } else { hideInlineError('cash-surname-err'); }
-        if (!validatePhoneFormat(phone)) { showInlineError('cash-phone-err'); hasError = true; } else { hideInlineError('cash-phone-err'); }
-        if (!validateEmailFormat(email)) { showInlineError('cash-email-err'); hasError = true; } else { hideInlineError('cash-email-err'); }
-
-        if (hasError) return;
-
-        const carTitle = document.getElementById('d-title').innerText;
-        const cashPrice = document.getElementById('cash-price-val').innerText;
-
-        sendToDiscord(DISCORD_WEBHOOKS.koupe, 'Nová rezervace / nákup hotově', {
-          'Jméno': name,
-          'Příjmení': surname,
-          'Telefon': phone,
-          'Email': email,
-          'Zvolený vůz': carTitle,
-          'Způsob platby': 'Hotově',
-          'Celková cena': cashPrice
-        }, 5763719);
-
-        formBox.style.display = 'none';
-        submitBtn.style.display = 'none';
-        document.getElementById('cash-alert').style.display = 'flex';
-      }
-    }
-
-    function handleSellSubmit(event) {
-      event.preventDefault();
-      const name = document.getElementById('sell-name').value.trim();
-      const surname = document.getElementById('sell-surname').value.trim();
-      const phone = document.getElementById('sell-phone').value.trim();
-      const email = document.getElementById('sell-email').value.trim();
-      const carModel = document.getElementById('sell-car-model').value.trim();
-      const priceIdea = document.getElementById('sell-price-idea').value.trim();
-      const upravy = document.getElementById('sel-upravy').value;
-      const tuningLink = document.getElementById('sell-tuning-link').value.trim();
-
-      let hasError = false;
-
-      if (!name) { showInlineError('sell-name-err'); hasError = true; } else { hideInlineError('sell-name-err'); }
-      if (!surname) { showInlineError('sell-surname-err'); hasError = true; } else { hideInlineError('sell-surname-err'); }
-      if (!validatePhoneFormat(phone)) { showInlineError('sell-phone-err'); hasError = true; } else { hideInlineError('sell-phone-err'); }
-      if (!validateEmailFormat(email)) { showInlineError('sell-email-err'); hasError = true; } else { hideInlineError('sell-email-err'); }
-
-      if (hasError) return;
-
-      sendToDiscord(DISCORD_WEBHOOKS.prodej, 'Nová nabídka k výkupu vozu', {
-        'Jméno': name,
-        'Příjmení': surname,
-        'Telefon': phone,
-        'Email': email,
-        'Model vozu': carModel,
-        'Představa o ceně': priceIdea,
-        'Úpravy': upravy === 'upravy' ? `S úpravami (Odkaz: ${tuningLink || 'Neuveden'})` : 'Bez úprav'
-      }, 15158332);
-
-      document.getElementById('sell-alert').style.display = 'flex';
-    }
-
-    function showHome() {
-      document.querySelectorAll('.page-view').forEach(el => el.classList.remove('active'));
-      document.getElementById('home-view').classList.add('active');
-      document.getElementById('searchInput').value = '';
-      
-      document.getElementById('rangeMinPrice').value = minCarPrice;
-      document.getElementById('rangeMaxPrice').value = maxCarPrice;
-      updateDualSliderUI();
-      
-      document.querySelectorAll('.sidebar input[type="checkbox"]').forEach(cb => cb.checked = false);
-      filterCars();
-      window.scrollTo(0,0);
-    }
-
-    function showSellPage() {
-      document.querySelectorAll('.page-view').forEach(el => el.classList.remove('active'));
-      document.getElementById('sell-view').classList.add('active');
-      document.getElementById('sell-alert').style.display = 'none';
-      hideInlineError('sell-name-err');
-      hideInlineError('sell-surname-err');
-      hideInlineError('sell-phone-err');
-      hideInlineError('sell-email-err');
-      window.scrollTo(0,0);
-    }
-
-    function handleTuningMainChange() {
-      const val = document.getElementById('sel-upravy').value;
-      const nested = document.getElementById('tuning-nested-container');
-      if (val === 'upravy') {
-        nested.style.display = 'block';
-      } else {
-        nested.style.display = 'none';
-      }
-    }
-
-    initPriceRange();
-    updateCounts();
-    filterCars();
   </script>
 </body>
 </html>
