@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="cs">
 <head>
@@ -164,8 +163,16 @@
     .catalog-layout {
       display: grid;
       grid-template-columns: 280px 1fr;
-      gap: 30px;
+      gap: 25px;
       align-items: start;
+    }
+
+    .sidebar-column {
+      display: flex;
+      flex-direction: column;
+      gap: 25px;
+      position: sticky;
+      top: 105px;
     }
 
     .sidebar {
@@ -417,7 +424,7 @@
 
     .cars-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
       gap: 20px;
     }
 
@@ -447,11 +454,28 @@
 
     .car-img-box img { width: 100%; height: 100%; object-fit: cover; }
 
-    .car-tag-badge {
+    .car-badges-container {
       position: absolute;
       top: 8px;
       left: 8px;
+      right: 8px;
+      display: flex;
+      justify-content: space-between;
+      pointer-events: none;
+    }
+
+    .car-tag-badge {
       background: #ef4444;
+      color: white;
+      font-size: 10px;
+      font-weight: 800;
+      padding: 3px 8px;
+      border-radius: 6px;
+      text-transform: uppercase;
+    }
+
+    .car-installment-badge {
+      background: var(--accent);
       color: white;
       font-size: 10px;
       font-weight: 800;
@@ -514,12 +538,37 @@
       box-shadow: 0 10px 30px var(--card-shadow);
     }
 
+    .detail-main-img-wrapper {
+      position: relative;
+      cursor: pointer;
+      border-radius: 14px;
+      overflow: hidden;
+      margin-bottom: 12px;
+    }
+
     .detail-main-img {
       width: 100%;
       height: 320px;
       object-fit: cover;
-      border-radius: 14px;
-      margin-bottom: 12px;
+      display: block;
+      transition: transform 0.3s ease;
+    }
+
+    .detail-main-img-wrapper:hover .detail-main-img {
+      transform: scale(1.02);
+    }
+
+    .zoom-hint {
+      position: absolute;
+      bottom: 10px;
+      right: 10px;
+      background: rgba(0, 0, 0, 0.6);
+      color: white;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 5px 10px;
+      border-radius: 8px;
+      pointer-events: none;
     }
 
     .detail-thumbs {
@@ -534,17 +583,20 @@
       object-fit: cover;
       border-radius: 8px;
       cursor: pointer;
-      opacity: 0.6;
+      opacity: 0.5;
       border: 2px solid transparent;
+      transition: all 0.25s ease;
     }
 
-    .detail-thumbs img.active { opacity: 1; border-color: var(--accent); }
+    .detail-thumbs img:hover {
+      opacity: 0.8;
+    }
 
-    .detail-info h1 {
-      font-size: 26px;
-      font-weight: 900;
-      margin-bottom: 6px;
-      color: var(--text-main);
+    .detail-thumbs img.active {
+      opacity: 1;
+      border-color: var(--accent);
+      transform: translateY(-4px);
+      box-shadow: 0 6px 15px rgba(37, 99, 235, 0.3);
     }
 
     .specs-table {
@@ -699,7 +751,163 @@
 
     .btn-back:hover { color: var(--text-main); }
 
-    /* Styly pro stránku Výkup vozů */
+    .alert-banner {
+      display: none;
+      background-color: #ecfdf5;
+      border: 1px solid #10b981;
+      color: #065f46;
+      padding: 14px 18px;
+      border-radius: 12px;
+      font-size: 13px;
+      font-weight: 700;
+      margin-top: 15px;
+      align-items: center;
+      gap: 10px;
+    }
+
+    [data-theme="dark"] .alert-banner {
+      background-color: rgba(16, 185, 129, 0.15);
+      color: #34d399;
+      border-color: #059669;
+    }
+
+    .inline-error-msg {
+      display: none;
+      font-size: 11px;
+      font-weight: 700;
+      color: #ef4444;
+      margin-top: 4px;
+    }
+
+    .user-form-box {
+      background: var(--control-bg);
+      border: 1px solid var(--control-border);
+      border-radius: 14px;
+      padding: 20px;
+      margin-top: 15px;
+      margin-bottom: 15px;
+      display: none;
+    }
+
+    .user-form-box h3 {
+      font-size: 14px;
+      font-weight: 800;
+      color: var(--text-main);
+      margin-bottom: 14px;
+    }
+
+    .user-form-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .user-form-table td {
+      padding: 8px 0;
+      vertical-align: middle;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .user-form-table td.u-label {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-muted);
+      width: 35%;
+    }
+
+    .user-form-table td.u-input {
+      width: 65%;
+    }
+
+    .user-input-field {
+      width: 100%;
+      background: var(--bg-card);
+      border: 1px solid var(--control-border);
+      border-radius: 8px;
+      padding: 8px 12px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-main);
+      outline: none;
+    }
+
+    .user-input-field:focus {
+      border-color: var(--accent);
+    }
+
+    .lightbox-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.85);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+      padding: 40px;
+    }
+
+    .lightbox-modal.active {
+      display: flex;
+    }
+
+    .lightbox-content {
+      position: relative;
+      max-width: 900px;
+      max-height: 85vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .lightbox-content img {
+      max-width: 100%;
+      max-height: 85vh;
+      object-fit: contain;
+      border-radius: 12px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    }
+
+    .lightbox-close {
+      position: absolute;
+      top: -40px;
+      right: 0;
+      background: none;
+      border: none;
+      color: white;
+      font-size: 28px;
+      font-weight: 900;
+      cursor: pointer;
+    }
+
+    .lightbox-arrow {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(255, 255, 255, 0.15);
+      color: white;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      font-size: 20px;
+      font-weight: bold;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s;
+      z-index: 1010;
+    }
+
+    .lightbox-arrow:hover {
+      background: rgba(255, 255, 255, 0.3);
+    }
+
+    .lightbox-prev { left: -70px; }
+    .lightbox-next { right: -70px; }
+
     .sell-form-container {
       background: var(--bg-card);
       border: 1px solid var(--border-color);
@@ -785,6 +993,17 @@
       margin-top: auto;
       border-top: 1px solid var(--border-color);
     }
+
+    @media (max-width: 1024px) {
+      .lightbox-prev { left: 10px; }
+      .lightbox-next { right: 10px; }
+      .catalog-layout {
+        grid-template-columns: 1fr;
+      }
+      .sidebar-column {
+        position: static;
+      }
+    }
   </style>
 </head>
 <body data-theme="light">
@@ -813,77 +1032,80 @@
     <div id="home-view" class="page-view active">
       <div class="catalog-layout">
         
-        <aside class="sidebar">
-          <div class="filter-group" id="group-nabidka">
-            <div class="filter-header-row" onclick="toggleFilterGroup('group-nabidka')">
-              Nabídka vozů <span class="arrow">▲</span>
-            </div>
-            <div class="filter-content">
-              <label class="checkbox-label">
-                <div class="checkbox-content">
-                  <input type="checkbox" id="filterNove" onchange="filterCars()">
-                  Nově v nabídce
-                </div>
-                <span class="count-tag" id="count-nove">(0)</span>
-              </label>
-
-              <label class="checkbox-label">
-                <div class="checkbox-content">
-                  <input type="checkbox" id="filterZlevneno" onchange="filterCars()">
-                  Zlevněné vozy
-                </div>
-                <span class="count-tag" id="count-zlevneno">(0)</span>
-              </label>
-
-              <label class="checkbox-label">
-                <div class="checkbox-content">
-                  <input type="checkbox" id="filterFinancovani" onchange="filterCars()">
-                  Vozy s možnostmi financování
-                </div>
-                <span class="count-tag" id="count-financovani">(0)</span>
-              </label>
-            </div>
-          </div>
-
-          <div class="filter-group" id="group-znacka">
-            <div class="filter-header-row" onclick="toggleFilterGroup('group-znacka')">
-              Značka a model <span class="arrow">▲</span>
-            </div>
-            <div class="filter-content">
-              <input type="text" id="searchInput" class="search-control" placeholder="Hledat značku, model..." oninput="filterCars()">
-            </div>
-          </div>
-
-          <div class="filter-group" id="group-cena">
-            <div class="filter-header-row" onclick="toggleFilterGroup('group-cena')">
-              Cena <span class="arrow">▲</span>
-            </div>
-            <div class="filter-content">
-              <div class="price-inputs-grid">
-                <div class="price-box">
-                  <span id="priceMinText">0</span> <span>Kč</span>
-                </div>
-                <div class="price-box">
-                  <span id="priceMaxText">0</span> <span>Kč</span>
-                </div>
+        <!-- Levý sloupec: Pouze filtry -->
+        <div class="sidebar-column">
+          <aside class="sidebar">
+            <div class="filter-group" id="group-nabidka">
+              <div class="filter-header-row" onclick="toggleFilterGroup('group-nabidka')">
+                Nabídka vozů <span class="arrow">▲</span>
               </div>
+              <div class="filter-content">
+                <label class="checkbox-label">
+                  <div class="checkbox-content">
+                    <input type="checkbox" id="filterNove" onchange="filterCars()">
+                    Nově v nabídce
+                  </div>
+                  <span class="count-tag" id="count-nove">(0)</span>
+                </label>
 
-              <div class="dual-range-container">
-                <div class="slider-track"></div>
-                <div class="slider-fill" id="sliderFill"></div>
-                <input type="range" id="rangeMinPrice" min="0" max="100" value="0" step="1000" oninput="onDualSliderInput()">
-                <input type="range" id="rangeMaxPrice" min="0" max="100" value="100" step="1000" oninput="onDualSliderInput()">
-              </div>
+                <label class="checkbox-label">
+                  <div class="checkbox-content">
+                    <input type="checkbox" id="filterZlevneno" onchange="filterCars()">
+                    Zlevněné vozy
+                  </div>
+                  <span class="count-tag" id="count-zlevneno">(0)</span>
+                </label>
 
-              <div class="range-labels">
-                <span id="sliderMinLabel">0 Kč</span>
-                <span id="sliderMaxLabel">0 Kč</span>
+                <label class="checkbox-label">
+                  <div class="checkbox-content">
+                    <input type="checkbox" id="filterFinancovani" onchange="filterCars()">
+                    Vozy s možnostmi financování
+                  </div>
+                  <span class="count-tag" id="count-financovani">(0)</span>
+                </label>
               </div>
             </div>
-          </div>
 
-        </aside>
+            <div class="filter-group" id="group-znacka">
+              <div class="filter-header-row" onclick="toggleFilterGroup('group-znacka')">
+                Značka a model <span class="arrow">▲</span>
+              </div>
+              <div class="filter-content">
+                <input type="text" id="searchInput" class="search-control" placeholder="Hledat značku, model..." oninput="filterCars()">
+              </div>
+            </div>
 
+            <div class="filter-group" id="group-cena">
+              <div class="filter-header-row" onclick="toggleFilterGroup('group-cena')">
+                Cena <span class="arrow">▲</span>
+              </div>
+              <div class="filter-content">
+                <div class="price-inputs-grid">
+                  <div class="price-box">
+                    <span id="priceMinText">0</span> <span>Kč</span>
+                  </div>
+                  <div class="price-box">
+                    <span id="priceMaxText">0</span> <span>Kč</span>
+                  </div>
+                </div>
+
+                <div class="dual-range-container">
+                  <div class="slider-track"></div>
+                  <div class="slider-fill" id="sliderFill"></div>
+                  <input type="range" id="rangeMinPrice" min="0" max="100" value="0" step="1000" oninput="onDualSliderInput()">
+                  <input type="range" id="rangeMaxPrice" min="0" max="100" value="100" step="1000" oninput="onDualSliderInput()">
+                </div>
+
+                <div class="range-labels">
+                  <span id="sliderMinLabel">0 Kč</span>
+                  <span id="sliderMaxLabel">0 Kč</span>
+                </div>
+              </div>
+            </div>
+          </aside>
+        </div>
+
+        <!-- Pravý/hlavní obsah s vozy -->
         <main class="catalog-content">
           <div class="top-search-bar">
             <div style="font-size: 18px; font-weight: 900; color: var(--text-main);">Aktuální nabídka vozidel</div>
@@ -902,7 +1124,10 @@
       
       <div class="detail-grid">
         <div>
-          <img id="d-main-img" class="detail-main-img" src="" alt="Auto">
+          <div class="detail-main-img-wrapper" onclick="openLightbox()">
+            <img id="d-main-img" class="detail-main-img" src="" alt="Auto">
+            <div class="zoom-hint">🔍 Kliknutím zvětšit</div>
+          </div>
           <div class="detail-thumbs" id="d-thumbs"></div>
           
           <table class="specs-table" style="margin-top: 20px;">
@@ -917,7 +1142,7 @@
           <h1 id="d-title">Název vozu</h1>
           <p id="d-params-text" style="color: var(--text-muted); font-size: 13px; font-weight: 600; margin-bottom: 20px;"></p>
           
-          <div class="action-buttons-grid">
+          <div class="action-buttons-grid" id="action-buttons-grid">
             <button class="btn-main-action active-mode" id="btn-mode-calc" onclick="switchMode('calc')">SPOČÍTAT SPLÁTKY</button>
             <button class="btn-main-action" id="btn-mode-cash" onclick="switchMode('cash')">KOUPIT HOTOVĚ</button>
           </div>
@@ -969,16 +1194,93 @@
               </div>
             </div>
 
-            <button class="btn-submit-form" onclick="alert('Žádost o financování byla odeslána!')">KONTAKTNÍ FORMULÁŘ</button>
+            <!-- Formulář pro vyplnění údajů pro financování -->
+            <div id="calc-user-form" class="user-form-box">
+              <h3>Zadejte vaše kontaktní údaje</h3>
+              <table class="user-form-table">
+                <tr>
+                  <td class="u-label">Jméno:</td>
+                  <td class="u-input">
+                    <input type="text" id="calc-name" class="user-input-field" placeholder="Zadejte jméno" oninput="hideInlineError('calc-name-err');">
+                    <div id="calc-name-err" class="inline-error-msg">Prosíme vyplňte jméno!</div>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="u-label">Příjmení:</td>
+                  <td class="u-input">
+                    <input type="text" id="calc-surname" class="user-input-field" placeholder="Zadejte příjmení" oninput="hideInlineError('calc-surname-err');">
+                    <div id="calc-surname-err" class="inline-error-msg">Prosíme vyplňte příjmení!</div>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="u-label">Telefon:</td>
+                  <td class="u-input">
+                    <input type="text" id="calc-phone" class="user-input-field" placeholder="Zadejte telefon" maxlength="6" oninput="this.value = this.value.replace(/\D/g, ''); hideInlineError('calc-phone-err');">
+                    <div id="calc-phone-err" class="inline-error-msg">Prosíme vyplňte telefonní číslo!</div>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="u-label">Email:</td>
+                  <td class="u-input">
+                    <input type="text" id="calc-email" class="user-input-field" placeholder="Zadejte email" oninput="hideInlineError('calc-email-err');">
+                    <div id="calc-email-err" class="inline-error-msg">Prosíme, vyplňte svou emailovou adresu!</div>
+                  </td>
+                </tr>
+              </table>
+            </div>
+
+            <button class="btn-submit-form" id="btn-calc-submit" onclick="handleFinancingAction()">Požádat o financování vozu</button>
+            <div id="calc-alert" class="alert-banner">
+              <span>✓</span> Děkujeme za Váš zájem! Vaši žádost posoudíme a co nejdříve Vás kontaktujeme
+            </div>
           </div>
 
           <div id="section-cash" class="cash-section" style="display: none;">
             <div class="cash-content-box">
               <div style="font-size: 11px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; margin-bottom: 5px;">Celková cena hotově</div>
               <div style="font-size: 28px; font-weight: 900; color: var(--accent); margin-bottom: 15px;" id="cash-price-val">0 Kč</div>
-              <div style="font-size: 12px; color: var(--text-muted); font-weight: 600; line-height: 1.5;">Okamžitý přepis vozidla na Vaše jméno na pobočce.</div>
+              <div style="font-size: 12px; color: var(--text-muted); font-weight: 600; line-height: 1.5;">Okamžitý přepis vozidla</div>
             </div>
-            <button class="btn-submit-form" onclick="alert('Nákup v hotovosti potvrzen!')">DOKONČIT NÁKUP HOTOVĚ</button>
+
+            <!-- Formulář pro vyplnění údajů pro nákup hotově -->
+            <div id="cash-user-form" class="user-form-box">
+              <h3>Zadejte vaše kontaktní údaje</h3>
+              <table class="user-form-table">
+                <tr>
+                  <td class="u-label">Jméno:</td>
+                  <td class="u-input">
+                    <input type="text" id="cash-name" class="user-input-field" placeholder="Zadejte jméno" oninput="hideInlineError('cash-name-err');">
+                    <div id="cash-name-err" class="inline-error-msg">Prosíme vyplňte jméno!</div>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="u-label">Příjmení:</td>
+                  <td class="u-input">
+                    <input type="text" id="cash-surname" class="user-input-field" placeholder="Zadejte příjmení" oninput="hideInlineError('cash-surname-err');">
+                    <div id="cash-surname-err" class="inline-error-msg">Prosíme vyplňte příjmení!</div>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="u-label">Telefon:</td>
+                  <td class="u-input">
+                    <input type="text" id="cash-phone" class="user-input-field" placeholder="Zadejte telefon" maxlength="6" oninput="this.value = this.value.replace(/\D/g, ''); hideInlineError('cash-phone-err');">
+                    <div id="cash-phone-err" class="inline-error-msg">Prosíme vyplňte telefonní číslo!</div>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="u-label">Email:</td>
+                  <td class="u-input">
+                    <input type="text" id="cash-email" class="user-input-field" placeholder="Zadejte email" oninput="hideInlineError('cash-email-err');">
+                    <div id="cash-email-err" class="inline-error-msg">Prosíme, vyplňte svou emailovou adresu!</div>
+                  </td>
+                </tr>
+              </table>
+            </div>
+
+            <button class="btn-submit-form" id="btn-cash-submit" onclick="handleCashAction()">Rezervovat vůz</button>
+            <div id="cash-alert" class="alert-banner">
+              <span>✓</span> Děkujeme za Váš zájem! Vozidlo bylo rezervováno. V co nejbližší době Vás kontaktujeme
+            </div>
           </div>
 
         </div>
@@ -991,30 +1293,46 @@
 
       <div class="sell-form-container">
         <h2>Formulář pro výkup vozidla</h2>
-        <form onsubmit="event.preventDefault(); alert('Formulář byl úspěšně odeslán!'); showHome();">
+        <form onsubmit="handleSellSubmit(event)">
           <table class="form-table">
             <tr>
               <td class="form-label">Jaký auto prodává (značka/model):</td>
               <td class="form-input-cell">
-                <input type="text" class="form-input" placeholder="např. 2000 Mazda RX-7" required>
+                <input type="text" class="form-input" id="sell-car-model" placeholder="např. 2000 Mazda RX-7" required>
               </td>
             </tr>
             <tr>
-              <td class="form-label">Jméno a příjmení:</td>
+              <td class="form-label">Jméno:</td>
               <td class="form-input-cell">
-                <input type="text" class="form-input" placeholder="Jan Novák" required>
+                <input type="text" class="form-input" id="sell-name" placeholder="Zadejte jméno" oninput="hideInlineError('sell-name-err');">
+                <div id="sell-name-err" class="inline-error-msg">Prosíme vyplňte jméno!</div>
               </td>
             </tr>
             <tr>
-              <td class="form-label">Kontakt (tel. č. a email):</td>
+              <td class="form-label">Příjmení:</td>
               <td class="form-input-cell">
-                <input type="text" class="form-input" placeholder="XXX-XXX, jméno.příjmení@post.ic" required>
+                <input type="text" class="form-input" id="sell-surname" placeholder="Zadejte příjmení" oninput="hideInlineError('sell-surname-err');">
+                <div id="sell-surname-err" class="inline-error-msg">Prosíme vyplňte příjmení!</div>
+              </td>
+            </tr>
+            <tr>
+              <td class="form-label">Telefon:</td>
+              <td class="form-input-cell">
+                <input type="text" class="form-input" id="sell-phone" placeholder="Zadejte telefon" maxlength="6" oninput="this.value = this.value.replace(/\D/g, ''); hideInlineError('sell-phone-err');">
+                <div id="sell-phone-err" class="inline-error-msg">Prosíme vyplňte telefonní číslo!</div>
+              </td>
+            </tr>
+            <tr>
+              <td class="form-label">Email:</td>
+              <td class="form-input-cell">
+                <input type="text" class="form-input" id="sell-email" placeholder="Zadejte email" oninput="hideInlineError('sell-email-err');">
+                <div id="sell-email-err" class="inline-error-msg">Prosíme, vyplňte svou emailovou adresu!</div>
               </td>
             </tr>
             <tr>
               <td class="form-label">Představa o ceně (Kč):</td>
               <td class="form-input-cell">
-                <input type="text" class="form-input" placeholder="např. 300 000 Kč" required>
+                <input type="text" class="form-input" id="sell-price-idea" placeholder="např. 300 000 Kč" required>
               </td>
             </tr>
             <tr>
@@ -1025,26 +1343,37 @@
                   <option value="upravy">S úpravami</option>
                 </select>
 
-                <!-- Vnořená kolonka pro link na protokol o technickém stavu při úpravách -->
                 <div id="tuning-nested-container" class="nested-tuning-box">
                   <div>
                     <label>Odkaz na protokol o technickém stavu vozidla</label>
-                    <input type="url" class="form-input" placeholder="https://example.com/protokol.pdf">
+                    <input type="url" class="form-input" id="sell-tuning-link" placeholder="https://example.com/protokol.pdf">
                   </div>
                 </div>
               </td>
             </tr>
           </table>
 
-          <button type="submit" class="btn-submit-form" style="margin-top: 25px;">Odeslat nabídku k výkupu</button>
+          <button type="submit" class="btn-submit-form" style="margin-top: 25px;">Odeslat nabídku k prodeji vozu</button>
+          <div id="sell-alert" class="alert-banner">
+            <span>✓</span> Děkujeme za Váš zájem! Vaši žádost o prodej vozu zkontrolujeme a co nejdříve Vás zkontaktujeme
+          </div>
         </form>
       </div>
     </div>
 
   </div>
 
+  <div id="lightboxModal" class="lightbox-modal" onclick="closeLightbox(event)">
+    <div class="lightbox-content" onclick="event.stopPropagation()">
+      <button class="lightbox-close" onclick="closeLightbox()">×</button>
+      <button class="lightbox-arrow lightbox-prev" onclick="changeLightboxImage(-1)">❮</button>
+      <img id="lightboxImg" src="" alt="Zvětšený obrázek">
+      <button class="lightbox-arrow lightbox-next" onclick="changeLightboxImage(1)">❯</button>
+    </div>
+  </div>
+
   <footer>
-    VALEO CARS – Váš spolehlivý partner pro nákup vozidel
+    &copy; Provozovatel portálu je právnická osoba Valeo, IČ 363
   </footer>
 
   <script>
@@ -1068,12 +1397,182 @@
           "images/rx72.png",
           "images/rx73.png"
         ]
+      },
+      {
+        id: 2,
+        title: "2018 Dodge Charger 5.7 V8",
+        params: "Sedan · RWD · V8 HEMI",
+        km: "4 380 km",
+        vin: "2763",
+        color: "Bílá",
+        tuning: "NE",
+        price: "2 499 000 Kč",
+        rawPrice: 2499000,
+        nove: true,
+        zlevneno: false,
+        financovani: true,
+        img: "images/charger1.png",
+        gallery: [
+          "images/charger1.png",
+          "images/charger2.png",
+          "images/charger3.png"
+        ]
+      },
+      {
+        id: 3,
+        title: "2012 Chevrolet Camaro 7.0 V8",
+        params: "Sportovní kupé · RWD · V8",
+        km: "345 km",
+        vin: "16535",
+        color: "Černá s bílými pruhy",
+        tuning: "NE",
+        price: "599 000 Kč",
+        rawPrice: 599000,
+        nove: true,
+        zlevneno: true,
+        financovani: true,
+        img: "images/camaro1.png",
+        gallery: [
+          "images/camaro1.png",
+          "images/camaro2.png",
+          "images/camaro3.png"
+        ]
+      },
+      {
+        id: 4,
+        title: "2007 Volkswagen Golf 2.0TSI",
+        params: "Hatchback · FWD · Turbo",
+        km: "433 km",
+        vin: "25733",
+        color: "Bílá",
+        tuning: "NE",
+        price: "149 000 Kč",
+        rawPrice: 149000,
+        nove: true,
+        zlevneno: false,
+        financovani: true,
+        img: "images/golf1.png",
+        gallery: [
+          "images/golf1.png",
+          "images/golf2.png",
+          "images/golf3.png"
+        ]
+      },
+      {
+        id: 5,
+        title: "1992 Chevrolet K5 Blazer",
+        params: "Off-road / SUV · 4x4",
+        km: "485 km",
+        vin: "25411",
+        color: "Černo-bílá",
+        tuning: "NE",
+        price: "99 000 Kč",
+        rawPrice: 99000,
+        nove: true,
+        zlevneno: false,
+        financovani: true,
+        img: "images/k51.png",
+        gallery: [
+          "images/k51.png",
+          "images/k52.png",
+          "images/k53.png"
+        ]
+      },
+      {
+        id: 6,
+        title: "2001 Honda XL",
+        params: "Motocykl · Enduro",
+        km: "847 km",
+        vin: "13458",
+        color: "Bílá",
+        tuning: "NE",
+        price: "99 000 Kč",
+        rawPrice: 99000,
+        nove: true,
+        zlevneno: false,
+        financovani: false,
+        img: "images/XL.png",
+        gallery: [
+          "images/XL.png"
+        ]
+      },
+      {
+        id: 7,
+        title: "2008 Cadillac Escalade",
+        params: "Luxusní SUV · 4x4 · V8",
+        km: "731 km",
+        vin: "28243",
+        color: "Černá",
+        tuning: "NE",
+        price: "990 000 Kč",
+        rawPrice: 990000,
+        nove: true,
+        zlevneno: false,
+        financovani: true,
+        img: "images/escalade1.png",
+        gallery: [
+          "images/escalade1.png",
+          "images/escalade2.png",
+          "images/escalade3.png"
+        ]
       }
     ];
 
     let currentSelectedCarPrice = 0;
     let minCarPrice = 0;
     let maxCarPrice = 0;
+    let currentCarGallery = [];
+    let currentImageIndex = 0;
+
+    // Discord webhook URL adresy
+    const DISCORD_WEBHOOKS = {
+      financovani: 'https://discord.com/api/webhooks/1546237855355900044/GPRqejNRE4-KHc_B9dlEaBZiNDQvMsDs-hx_zk9BrkNaN-6ypWupSl5ftfvVY8Gw9jq-',
+      koupe: 'https://discord.com/api/webhooks/1546237944896032798/pIeTlPLn60OLy6fprl7Ka4Sefv6m6JA-vvPYHtMkJaBjbcwpAlyWKcXNqr7zezg0a55S',
+      prodej: 'https://discord.com/api/webhooks/1546238051485749279/jIoSkv08lHPdljjnxtfa3KS5_L9phe3gydRxazthC8WWz7BOfFtYegx0buBsrD4lyVRa'
+    };
+
+    function sendToDiscord(webhookUrl, title, dataFields, color = 3447003) {
+      const fields = Object.entries(dataFields).map(([name, value]) => ({
+        name: name,
+        value: String(value || 'Neuvedeno'),
+        inline: true
+      }));
+
+      const payload = {
+        embeds: [{
+          title: title,
+          color: color,
+          fields: fields,
+          timestamp: new Date().toISOString()
+        }]
+      };
+
+      fetch(webhookUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      }).catch(error => console.error('Chyba při odesílání na Discord:', error));
+    }
+
+    function validateEmailFormat(email) {
+      const emailRegex = /^[^\s@]+\.[^\s@]+@post\.ic$/;
+      return emailRegex.test(email);
+    }
+
+    function validatePhoneFormat(phone) {
+      const phoneRegex = /^\d{6}$/;
+      return phoneRegex.test(phone);
+    }
+
+    function showInlineError(elementId) {
+      const el = document.getElementById(elementId);
+      if (el) el.style.display = 'block';
+    }
+
+    function hideInlineError(elementId) {
+      const el = document.getElementById(elementId);
+      if (el) el.style.display = 'none';
+    }
 
     function toggleFilterGroup(groupId) {
       const group = document.getElementById(groupId);
@@ -1182,12 +1681,19 @@
           <div class="car-card" onclick="openDetail(${car.id})">
             <div class="car-img-box">
               <img src="${car.img}" alt="${car.title}">
-              ${car.nove ? '<div class="car-tag-badge">Novinka</div>' : ''}
+              <div class="car-badges-container">
+                ${car.nove ? '<div class="car-tag-badge">Novinka</div>' : '<div></div>'}
+                ${car.financovani ? '<div class="car-installment-badge">Možnost na splátky</div>' : ''}
+              </div>
             </div>
             <div class="car-title">${car.title}</div>
             <div class="car-params-summary">VIN: <b>${car.vin}</b> · Najeto: <b>${car.km}</b> · Barva: ${car.color}</div>
             <div class="car-footer">
-              <div class="car-installment">Splátka<span>od ${minPayment.toLocaleString()} Kč</span></div>
+              ${car.financovani ? `
+                <div class="car-installment">Splátka<span>od ${minPayment.toLocaleString()} Kč</span></div>
+              ` : `
+                <div class="car-installment" style="color: var(--text-muted);">Pouze hotově</div>
+              `}
               <div class="car-price">
                 <div class="car-price-label">Cena</div>
                 <div class="car-price-val">${car.price}</div>
@@ -1226,6 +1732,8 @@
       if(!car) return;
 
       currentSelectedCarPrice = car.rawPrice;
+      currentCarGallery = car.gallery;
+      currentImageIndex = 0;
 
       document.getElementById('d-title').innerText = car.title;
       document.getElementById('d-params-text').innerText = car.params;
@@ -1235,20 +1743,89 @@
       document.getElementById('d-tuning').innerText = car.tuning;
       document.getElementById('cash-price-val').innerText = car.price;
 
-      document.getElementById('d-main-img').src = car.gallery[0];
-      document.getElementById('d-thumbs').innerHTML = car.gallery.map((img, idx) => `
-        <img src="${img}" class="${idx === 0 ? 'active' : ''}" onclick="document.getElementById('d-main-img').src='${img}'">
-      `).join('');
+      document.getElementById('calc-alert').style.display = 'none';
+      document.getElementById('cash-alert').style.display = 'none';
+      document.getElementById('calc-user-form').style.display = 'none';
+      document.getElementById('cash-user-form').style.display = 'none';
+      
+      hideInlineError('calc-name-err');
+      hideInlineError('calc-surname-err');
+      hideInlineError('calc-phone-err');
+      hideInlineError('calc-email-err');
+      hideInlineError('cash-name-err');
+      hideInlineError('cash-surname-err');
+      hideInlineError('cash-phone-err');
+      hideInlineError('cash-email-err');
 
-      document.getElementById('rangeWeeks').value = 14;
-      document.getElementById('rangeDown').value = 45;
-      updateCalculation();
+      document.getElementById('btn-calc-submit').innerText = 'Požádat o financování vozu';
+      document.getElementById('btn-cash-submit').innerText = 'Rezervovat vůz';
+      
+      document.getElementById('calc-name').value = '';
+      document.getElementById('calc-surname').value = '';
+      document.getElementById('calc-phone').value = '';
+      document.getElementById('calc-email').value = '';
+      document.getElementById('cash-name').value = '';
+      document.getElementById('cash-surname').value = '';
+      document.getElementById('cash-phone').value = '';
+      document.getElementById('cash-email').value = '';
 
-      switchMode('calc');
+      updateGalleryView();
+
+      const actionButtonsGrid = document.getElementById('action-buttons-grid');
+      const sectionCalc = document.getElementById('section-calc');
+      const sectionCash = document.getElementById('section-cash');
+
+      if (!car.financovani) {
+        actionButtonsGrid.style.display = 'none';
+        sectionCalc.style.display = 'none';
+        sectionCash.style.display = 'block';
+      } else {
+        actionButtonsGrid.style.display = 'grid';
+        document.getElementById('rangeWeeks').value = 14;
+        document.getElementById('rangeDown').value = 45;
+        updateCalculation();
+        switchMode('calc');
+      }
 
       document.querySelectorAll('.page-view').forEach(el => el.classList.remove('active'));
       document.getElementById('detail-view').classList.add('active');
       window.scrollTo(0,0);
+    }
+
+    function selectGalleryImage(index) {
+      currentImageIndex = index;
+      updateGalleryView();
+    }
+
+    function updateGalleryView() {
+      document.getElementById('d-main-img').src = currentCarGallery[currentImageIndex];
+      
+      const thumbsContainer = document.getElementById('d-thumbs');
+      thumbsContainer.innerHTML = currentCarGallery.map((img, idx) => `
+        <img src="${img}" class="${idx === currentImageIndex ? 'active' : ''}" onclick="selectGalleryImage(${idx})">
+      `).join('');
+    }
+
+    function openLightbox() {
+      const modal = document.getElementById('lightboxModal');
+      const lightboxImg = document.getElementById('lightboxImg');
+      lightboxImg.src = currentCarGallery[currentImageIndex];
+      modal.classList.add('active');
+    }
+
+    function closeLightbox() {
+      document.getElementById('lightboxModal').classList.remove('active');
+    }
+
+    function changeLightboxImage(direction) {
+      currentImageIndex += direction;
+      if (currentImageIndex < 0) {
+        currentImageIndex = currentCarGallery.length - 1;
+      } else if (currentImageIndex >= currentCarGallery.length) {
+        currentImageIndex = 0;
+      }
+      document.getElementById('lightboxImg').src = currentCarGallery[currentImageIndex];
+      updateGalleryView();
     }
 
     function updateCalculation() {
@@ -1283,6 +1860,23 @@
       const secCalc = document.getElementById('section-calc');
       const secCash = document.getElementById('section-cash');
 
+      document.getElementById('calc-alert').style.display = 'none';
+      document.getElementById('cash-alert').style.display = 'none';
+      document.getElementById('calc-user-form').style.display = 'none';
+      document.getElementById('cash-user-form').style.display = 'none';
+      
+      hideInlineError('calc-name-err');
+      hideInlineError('calc-surname-err');
+      hideInlineError('calc-phone-err');
+      hideInlineError('calc-email-err');
+      hideInlineError('cash-name-err');
+      hideInlineError('cash-surname-err');
+      hideInlineError('cash-phone-err');
+      hideInlineError('cash-email-err');
+
+      document.getElementById('btn-calc-submit').innerText = 'Požádat o financování vozu';
+      document.getElementById('btn-cash-submit').innerText = 'Rezervovat vůz';
+
       if(mode === 'calc') {
         btnCalc.classList.add('active-mode');
         btnCash.classList.remove('active-mode');
@@ -1294,6 +1888,128 @@
         secCash.style.display = 'block';
         secCalc.style.display = 'none';
       }
+    }
+
+    function handleFinancingAction() {
+      const formBox = document.getElementById('calc-user-form');
+      const submitBtn = document.getElementById('btn-calc-submit');
+
+      if (formBox.style.display !== 'block') {
+        formBox.style.display = 'block';
+        submitBtn.innerText = 'Odeslat žádost';
+      } else {
+        const name = document.getElementById('calc-name').value.trim();
+        const surname = document.getElementById('calc-surname').value.trim();
+        const phone = document.getElementById('calc-phone').value.trim();
+        const email = document.getElementById('calc-email').value.trim();
+
+        let hasError = false;
+
+        if (!name) { showInlineError('calc-name-err'); hasError = true; } else { hideInlineError('calc-name-err'); }
+        if (!surname) { showInlineError('calc-surname-err'); hasError = true; } else { hideInlineError('calc-surname-err'); }
+        if (!validatePhoneFormat(phone)) { showInlineError('calc-phone-err'); hasError = true; } else { hideInlineError('calc-phone-err'); }
+        if (!validateEmailFormat(email)) { showInlineError('calc-email-err'); hasError = true; } else { hideInlineError('calc-email-err'); }
+
+        if (hasError) return;
+
+        // Získání parametrů financování pro Discord
+        const weeks = document.getElementById('rangeWeeks').value;
+        const downPct = document.getElementById('rangeDown').value;
+        const downVal = document.getElementById('res-down-val').innerText;
+        const weeklyVal = document.getElementById('res-weekly-val').innerText;
+        const totalVal = document.getElementById('res-total-val').innerText;
+        const carTitle = document.getElementById('d-title').innerText;
+
+        sendToDiscord(DISCORD_WEBHOOKS.financovani, 'Nová žádost o financování vozu', {
+          'Jméno': name,
+          'Příjmení': surname,
+          'Telefon': phone,
+          'Email': email,
+          'Zvolený vůz': carTitle,
+          'Doba splácení': `${weeks} týdnů`,
+          'Akontace': `${downVal} (${downPct}%)`,
+          'Týdenní splátka': weeklyVal,
+          'Celková cena': totalVal
+        }, 2555904);
+
+        formBox.style.display = 'none';
+        submitBtn.style.display = 'none';
+        document.getElementById('calc-alert').style.display = 'flex';
+      }
+    }
+
+    function handleCashAction() {
+      const formBox = document.getElementById('cash-user-form');
+      const submitBtn = document.getElementById('btn-cash-submit');
+
+      if (formBox.style.display !== 'block') {
+        formBox.style.display = 'block';
+        submitBtn.innerText = 'Potvrdit rezervaci';
+      } else {
+        const name = document.getElementById('cash-name').value.trim();
+        const surname = document.getElementById('cash-surname').value.trim();
+        const phone = document.getElementById('cash-phone').value.trim();
+        const email = document.getElementById('cash-email').value.trim();
+
+        let hasError = false;
+
+        if (!name) { showInlineError('cash-name-err'); hasError = true; } else { hideInlineError('cash-name-err'); }
+        if (!surname) { showInlineError('cash-surname-err'); hasError = true; } else { hideInlineError('cash-surname-err'); }
+        if (!validatePhoneFormat(phone)) { showInlineError('cash-phone-err'); hasError = true; } else { hideInlineError('cash-phone-err'); }
+        if (!validateEmailFormat(email)) { showInlineError('cash-email-err'); hasError = true; } else { hideInlineError('cash-email-err'); }
+
+        if (hasError) return;
+
+        const carTitle = document.getElementById('d-title').innerText;
+        const cashPrice = document.getElementById('cash-price-val').innerText;
+
+        sendToDiscord(DISCORD_WEBHOOKS.koupe, 'Nová rezervace / nákup hotově', {
+          'Jméno': name,
+          'Příjmení': surname,
+          'Telefon': phone,
+          'Email': email,
+          'Zvolený vůz': carTitle,
+          'Způsob platby': 'Hotově',
+          'Celková cena': cashPrice
+        }, 5763719);
+
+        formBox.style.display = 'none';
+        submitBtn.style.display = 'none';
+        document.getElementById('cash-alert').style.display = 'flex';
+      }
+    }
+
+    function handleSellSubmit(event) {
+      event.preventDefault();
+      const name = document.getElementById('sell-name').value.trim();
+      const surname = document.getElementById('sell-surname').value.trim();
+      const phone = document.getElementById('sell-phone').value.trim();
+      const email = document.getElementById('sell-email').value.trim();
+      const carModel = document.getElementById('sell-car-model').value.trim();
+      const priceIdea = document.getElementById('sell-price-idea').value.trim();
+      const upravy = document.getElementById('sel-upravy').value;
+      const tuningLink = document.getElementById('sell-tuning-link').value.trim();
+
+      let hasError = false;
+
+      if (!name) { showInlineError('sell-name-err'); hasError = true; } else { hideInlineError('sell-name-err'); }
+      if (!surname) { showInlineError('sell-surname-err'); hasError = true; } else { hideInlineError('sell-surname-err'); }
+      if (!validatePhoneFormat(phone)) { showInlineError('sell-phone-err'); hasError = true; } else { hideInlineError('sell-phone-err'); }
+      if (!validateEmailFormat(email)) { showInlineError('sell-email-err'); hasError = true; } else { hideInlineError('sell-email-err'); }
+
+      if (hasError) return;
+
+      sendToDiscord(DISCORD_WEBHOOKS.prodej, 'Nová nabídka k výkupu vozu', {
+        'Jméno': name,
+        'Příjmení': surname,
+        'Telefon': phone,
+        'Email': email,
+        'Model vozu': carModel,
+        'Představa o ceně': priceIdea,
+        'Úpravy': upravy === 'upravy' ? `S úpravami (Odkaz: ${tuningLink || 'Neuveden'})` : 'Bez úprav'
+      }, 15158332);
+
+      document.getElementById('sell-alert').style.display = 'flex';
     }
 
     function showHome() {
@@ -1313,6 +2029,11 @@
     function showSellPage() {
       document.querySelectorAll('.page-view').forEach(el => el.classList.remove('active'));
       document.getElementById('sell-view').classList.add('active');
+      document.getElementById('sell-alert').style.display = 'none';
+      hideInlineError('sell-name-err');
+      hideInlineError('sell-surname-err');
+      hideInlineError('sell-phone-err');
+      hideInlineError('sell-email-err');
       window.scrollTo(0,0);
     }
 
