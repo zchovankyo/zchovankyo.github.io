@@ -20,7 +20,7 @@ export default async function handler(req, res) {
   
   console.log("Přijatý referer / origin je:", referer);
 
-  const allowedDomain = 'valeocars.ic'; 
+  const allowedDomain = 'zchovankyo.github.io'; 
 
   if (!referer.includes(allowedDomain)) {
     return res.status(403).json({ error: 'Přístup odepřen' });
