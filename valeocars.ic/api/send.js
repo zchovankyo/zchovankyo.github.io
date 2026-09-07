@@ -21,9 +21,9 @@ export default async function handler(req, res) {
     const { type, ...webhookData } = req.body;
     
     let webhookUrl;
-    if (type === '1') webhookUrl = process.env.DISCORD_WEBHOOK_URL_1;
-    else if (type === '2') webhookUrl = process.env.DISCORD_WEBHOOK_URL_2;
-    else if (type === '3') webhookUrl = process.env.DISCORD_WEBHOOK_URL_3;
+    if (type === 'leasing') webhookUrl = process.env.DISCORD_WEBHOOK_URL_1;
+    else if (type === 'koupe') webhookUrl = process.env.DISCORD_WEBHOOK_URL_2;
+    else if (type === 'prodej') webhookUrl = process.env.DISCORD_WEBHOOK_URL_3;
     else return res.status(400).json({ error: 'Neplatný typ webhooku' });
 
     const response = await fetch(webhookUrl, {
