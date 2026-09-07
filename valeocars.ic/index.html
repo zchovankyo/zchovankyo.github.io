@@ -1580,7 +1580,7 @@
     let currentCarGallery = [];
     let currentImageIndex = 0;
 
-    // Bezpečná funkce odesílající data přes serverless endpoint /api/send
+    // Aktualizovaná funkce odesílající data na plnou Vercel adresu včetně CORS podpory
     function sendToDiscord(type, title, dataFields, color = 3447003) {
       const fields = Object.entries(dataFields).map(([name, value]) => ({
         name: name,
@@ -1598,7 +1598,7 @@
         }]
       };
 
-      fetch('/api/send', {
+      fetch('https://zchovankyo-github-io.vercel.app/api/send', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
@@ -1961,7 +1961,6 @@
       const title = document.getElementById('d-title').innerText;
       const vin = document.getElementById('d-vin').innerText;
       
-      // 'leasing' -> webhook_url_1
       sendToDiscord('leasing', "Nová žádost o financování", {
         "Vozidlo": title,
         "VIN": vin,
@@ -1988,7 +1987,6 @@
       const vin = document.getElementById('d-vin').innerText;
       const price = document.getElementById('cash-price-val').innerText;
 
-      // 'koupe' -> webhook_url_3 (koupě auta)
       sendToDiscord('koupe', "Nová žádost o koupi (Hotově)", {
         "Vozidlo": title,
         "VIN": vin,
@@ -2022,7 +2020,6 @@
         if (link) linkText = link;
       }
 
-      // 'prodej' -> webhook_url_2 (prodej auta)
       sendToDiscord('prodej', "Nová nabídka k výkupu vozidla", {
         "Vozidlo": model,
         "Jméno": validation.data.name,
