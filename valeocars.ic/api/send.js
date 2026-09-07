@@ -18,7 +18,7 @@ export default async function handler(req, res) {
 
   const referer = req.headers.referer || req.headers.origin || '';
   
-  const allowedDomain = 'artic.leosight.cz'; 
+  const allowedDomain = 'valeocars.ic'; 
 
   if (!referer.includes(allowedDomain)) {
     return res.status(403).json({ error: 'Přístup odepřen' });
