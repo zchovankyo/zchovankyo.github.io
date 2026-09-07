@@ -1580,14 +1580,8 @@
     let currentCarGallery = [];
     let currentImageIndex = 0;
 
-    // Discord webhook URL adresy
-    const DISCORD_WEBHOOKS = {
-      financovani: 'https://discord.com/api/webhooks/1546237855355900044/GPRqejNRE4-KHc_B9dlEaBZiNDQvMsDs-hx_zk9BrkNaN-6ypWupSl5ftfvVY8Gw9jq-',
-      koupe: 'https://discord.com/api/webhooks/1546237944896032798/pIeTlPLn60OLy6fprl7Ka4Sefv6m6JA-vvPYHtMkJaBjbcwpAlyWKcXNqr7zezg0a55S',
-      prodej: 'https://discord.com/api/webhooks/1546238051485749279/jIoSkv08lHPdljjnxtfa3KS5_L9phe3gydRxazthC8WWz7BOfFtYegx0buBsrD4lyVRa'
-    };
-
-    function sendToDiscord(webhookUrl, title, dataFields, color = 3447003) {
+    // Bezpečná funkce odesílající data přes serverless endpoint /api/send
+    function sendToDiscord(type, title, dataFields, color = 3447003) {
       const fields = Object.entries(dataFields).map(([name, value]) => ({
         name: name,
         value: String(value || 'Neuvedeno'),
@@ -1595,6 +1589,7 @@
       }));
 
       const payload = {
+        type: type, // 'leasing', 'koupe' nebo 'prodej'
         embeds: [{
           title: title,
           color: color,
@@ -1603,11 +1598,11 @@
         }]
       };
 
-      fetch(webhookUrl, {
+      fetch('/api/send', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
-      }).catch(error => console.error('Chyba při odesílání na Discord:', error));
+      }).catch(error => console.error('Chyba při odesílání na server:', error));
     }
 
     function validateEmailFormat(email) {
@@ -1966,7 +1961,8 @@
       const title = document.getElementById('d-title').innerText;
       const vin = document.getElementById('d-vin').innerText;
       
-      sendToDiscord(DISCORD_WEBHOOKS.financovani, "Nová žádost o financování", {
+      // 'leasing' -> webhook_url_1
+      sendToDiscord('leasing', "Nová žádost o financování", {
         "Vozidlo": title,
         "VIN": vin,
         "Jméno": validation.data.name,
@@ -1992,7 +1988,8 @@
       const vin = document.getElementById('d-vin').innerText;
       const price = document.getElementById('cash-price-val').innerText;
 
-      sendToDiscord(DISCORD_WEBHOOKS.koupe, "Nová žádost o koupi (Hotově)", {
+      // 'koupe' -> webhook_url_3 (koupě auta)
+      sendToDiscord('koupe', "Nová žádost o koupi (Hotově)", {
         "Vozidlo": title,
         "VIN": vin,
         "Jméno": validation.data.name,
@@ -2025,7 +2022,8 @@
         if (link) linkText = link;
       }
 
-      sendToDiscord(DISCORD_WEBHOOKS.prodej, "Nová nabídka k výkupu vozidla", {
+      // 'prodej' -> webhook_url_2 (prodej auta)
+      sendToDiscord('prodej', "Nová nabídka k výkupu vozidla", {
         "Vozidlo": model,
         "Jméno": validation.data.name,
         "Příjmení": validation.data.surname,
