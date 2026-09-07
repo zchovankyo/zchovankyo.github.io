@@ -1,5 +1,4 @@
 export default async function handler(req, res) {
-  // Nastavení CORS hlaviček, aby Vercel požadavek neblokoval
   res.setHeader('Access-Control-Allow-Credentials', true);
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
@@ -22,8 +21,8 @@ export default async function handler(req, res) {
     
     let webhookUrl;
     if (type === 'leasing') webhookUrl = process.env.DISCORD_WEBHOOK_URL_1;
-    else if (type === 'koupe') webhookUrl = process.env.DISCORD_WEBHOOK_URL_2;
-    else if (type === 'prodej') webhookUrl = process.env.DISCORD_WEBHOOK_URL_3;
+    else if (type === 'prodej') webhookUrl = process.env.DISCORD_WEBHOOK_URL_2;
+    else if (type === 'koupe') webhookUrl = process.env.DISCORD_WEBHOOK_URL_3;
     else return res.status(400).json({ error: 'Neplatný typ webhooku' });
 
     const response = await fetch(webhookUrl, {
