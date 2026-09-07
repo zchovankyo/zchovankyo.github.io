@@ -6,7 +6,6 @@ export default async function handler(req, res) {
   try {
     const { type, ...webhookData } = req.body;
     
-    // Vybere správnou URL podle poslaného typu (1, 2 nebo 3)
     let webhookUrl;
     if (type === '1') webhookUrl = process.env.DISCORD_WEBHOOK_URL_1;
     else if (type === '2') webhookUrl = process.env.DISCORD_WEBHOOK_URL_2;
