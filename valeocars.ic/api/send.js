@@ -27,8 +27,29 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { type, ...webhookData } = req.body;
+    // Vytáhli jsme 'token' z těla požadavku, zbytek dat zůstává ve 'webhookData'
+    const { type, token, ...webhookData } = req.body;
     
+    // Ověření Cloudflare Turnstile tokenu
+    if (!token) {
+      return res.status(400).json({ error: 'Chybí bezpečnostní ověření (Turnstile token).' });
+    }
+
+    const turnstileResponse = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        secret: process.env.TURNSTILE_SECRET_KEY, // Klíč si nastavíš ve Vercel Environment Variables
+        response: token
+      })
+    });
+
+    const turnstileResult = await turnstileResponse.json();
+
+    if (!turnstileResult.success) {
+      return res.status(403).json({ error: 'Ověření proti botům selhalo.' });
+    }
+
     let webhookUrl;
     if (type === 'leasing') webhookUrl = process.env.DISCORD_WEBHOOK_URL_1;
     else if (type === 'prodej') webhookUrl = process.env.DISCORD_WEBHOOK_URL_2;
