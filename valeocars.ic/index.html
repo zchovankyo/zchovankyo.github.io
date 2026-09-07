@@ -7,6 +7,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <!-- Cloudflare Turnstile Script -->
+  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 
   <style>
     :root {
@@ -994,6 +996,12 @@
       border-top: 1px solid var(--border-color);
     }
 
+    .turnstile-wrapper {
+      margin: 15px 0;
+      display: flex;
+      justify-content: center;
+    }
+
     /* MEDIA QUERIES PRO RESPONZIVITU (PC & MOBIL) */
     @media (max-width: 1024px) {
       .lightbox-prev { left: 10px; }
@@ -1283,6 +1291,10 @@
                   </td>
                 </tr>
               </table>
+              <!-- Turnstile widget -->
+              <div class="turnstile-wrapper">
+                <div class="cf-turnstile" data-sitekey="0x4AAAAAAErw_LSX3A94Lz19"></div>
+              </div>
             </div>
 
             <button class="btn-submit-form" id="btn-calc-submit" onclick="handleFinancingAction()">Požádat o financování vozu</button>
@@ -1331,6 +1343,10 @@
                   </td>
                 </tr>
               </table>
+              <!-- Turnstile widget -->
+              <div class="turnstile-wrapper">
+                <div class="cf-turnstile" data-sitekey="0x4AAAAAAErw_LSX3A94Lz19"></div>
+              </div>
             </div>
 
             <button class="btn-submit-form" id="btn-cash-submit" onclick="handleCashAction()">Rezervovat vůz</button>
@@ -1408,6 +1424,11 @@
               </td>
             </tr>
           </table>
+
+          <!-- Turnstile widget -->
+          <div class="turnstile-wrapper">
+            <div class="cf-turnstile" data-sitekey="0x4AAAAAAErw_LSX3A94Lz19"></div>
+          </div>
 
           <button type="submit" class="btn-submit-form" style="margin-top: 25px;">Odeslat nabídku k prodeji vozu</button>
           <div id="sell-alert" class="alert-banner">
@@ -1580,7 +1601,7 @@
     let currentCarGallery = [];
     let currentImageIndex = 0;
 
-    // Aktualizovaná funkce odesílající data na plnou Vercel adresu včetně CORS podpory
+    // Aktualizovaná funkce odesílající data na plnou Vercel adresu včetně Turnstile tokenu
     function sendToDiscord(type, title, dataFields, color = 3447003) {
       const fields = Object.entries(dataFields).map(([name, value]) => ({
         name: name,
@@ -1588,8 +1609,13 @@
         inline: true
       }));
 
+      // Získání Turnstile tokenu z aktivní stránky/formuláře
+      const turnstileInput = document.querySelector('.page-view.active [name="cf-turnstile-response"]');
+      const turnstileToken = turnstileInput ? turnstileInput.value : '';
+
       const payload = {
         type: type, // 'leasing', 'koupe' nebo 'prodej'
+        token: turnstileToken, // Předání tokenu pro ověření na backendu
         embeds: [{
           title: title,
           color: color,
