@@ -18,6 +18,8 @@ export default async function handler(req, res) {
 
   const referer = req.headers.referer || req.headers.origin || '';
   
+  console.log("Přijatý referer / origin je:", referer);
+
   const allowedDomain = 'valeocars.ic'; 
 
   if (!referer.includes(allowedDomain)) {
